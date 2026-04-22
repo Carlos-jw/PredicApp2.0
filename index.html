@@ -1,912 +1,479 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PredicApp — Rediseño</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
-:root {
-  --brand:       #1d3f8a;
-  --brand-mid:   #2655b8;
-  --brand-light: #e8effe;
-  --brand-glow:  rgba(38,85,184,.15);
-  --bg:          #f0f2f8;
-  --surface:     #ffffff;
-  --surface-2:   #f7f8fc;
-  --line:        #e2e6f0;
-  --text:        #111827;
-  --text-muted:  #6b7280;
-  --success:     #16a34a;
-  --success-bg:  #dcfce7;
-  --warn:        #b45309;
-  --warn-bg:     #fef3c7;
-  --danger:      #dc2626;
-  --radius:      14px;
-  --radius-sm:   8px;
-  --font:        'Plus Jakarta Sans', sans-serif;
-  --nav-h:       62px;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
-  font-size: 14px;
-  min-height: 100dvh;
-}
-
-/* ── SHELL ─────────────────────────────── */
-.shell {
-  max-width: 430px;
-  margin: 0 auto;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  background: var(--bg);
-}
-
-/* ══════════════════════════════════════════
-   HEADER — Compacto con gradiente
-══════════════════════════════════════════ */
-.app-header {
-  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-mid) 100%);
-  padding: 10px 14px 10px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto auto;
-  gap: 8px 12px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 12px rgba(29,63,138,.3);
-}
-
-/* Logo row */
-.header-top {
-  grid-column: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.app-logo {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: -.025em;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.logo-icon {
-  width: 28px;
-  height: 28px;
-  background: rgba(255,255,255,.2);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-}
-
-/* Controles de sesión — compactos en la esquina */
-.header-session {
-  grid-column: 2;
-  grid-row: 1;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.role-pill {
-  background: rgba(255,255,255,.18);
-  color: #fff;
-  font-size: .68rem;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 20px;
-  letter-spacing: .01em;
-  white-space: nowrap;
-  backdrop-filter: blur(4px);
-}
-
-.btn-session {
-  background: rgba(255,255,255,.15);
-  border: 1px solid rgba(255,255,255,.25);
-  border-radius: var(--radius-sm);
-  color: #fff;
-  font-size: .72rem;
-  font-weight: 600;
-  font-family: var(--font);
-  padding: 4px 10px;
-  cursor: pointer;
-  transition: .15s;
-  white-space: nowrap;
-}
-.btn-session:hover { background: rgba(255,255,255,.28); }
-
-/* Stats row — compactas bajo el logo */
-.header-stats {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 6px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding-bottom: 1px;
-}
-.header-stats::-webkit-scrollbar { display: none; }
-
-.stat-chip {
-  background: rgba(255,255,255,.14);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255,255,255,.2);
-  border-radius: 20px;
-  padding: 3px 9px;
-  font-size: .68rem;
-  font-weight: 600;
-  color: rgba(255,255,255,.9);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.stat-chip strong { color: #fff; font-weight: 800; }
-
-/* ══════════════════════════════════════════
-   BANNER
-══════════════════════════════════════════ */
-.access-gate-banner {
-  background: var(--warn-bg);
-  border-bottom: 1px solid #fcd34d;
-  padding: 8px 16px;
-  font-size: .8rem;
-  color: var(--warn);
-  font-weight: 500;
-  display: none;
-}
-
-/* ══════════════════════════════════════════
-   NAV BAR — Bottom modern tabs
-══════════════════════════════════════════ */
-.nav-bar {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 430px;
-  height: var(--nav-h);
-  background: var(--surface);
-  border-top: 1px solid var(--line);
-  display: flex;
-  z-index: 100;
-  box-shadow: 0 -4px 20px rgba(0,0,0,.08);
-}
-
-.nav-tab {
-  flex: 1;
-  background: none;
-  border: none;
-  font-family: var(--font);
-  font-size: .62rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  padding: 8px 4px;
-  position: relative;
-  transition: color .15s;
-}
-
-.nav-tab .nav-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  transition: background .15s, transform .15s;
-}
-
-.nav-tab:hover { color: var(--brand-mid); }
-.nav-tab:hover .nav-icon { background: var(--brand-light); }
-
-.nav-tab.active { color: var(--brand); }
-.nav-tab.active .nav-icon {
-  background: var(--brand-light);
-  transform: translateY(-1px);
-}
-
-.nav-tab.active::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 20%;
-  right: 20%;
-  height: 2.5px;
-  background: var(--brand);
-  border-radius: 0 0 3px 3px;
-}
-
-/* Badge en nav */
-.nav-badge {
-  position: absolute;
-  top: 6px;
-  right: calc(50% - 22px);
-  background: var(--danger);
-  color: #fff;
-  font-size: .58rem;
-  font-weight: 800;
-  min-width: 15px;
-  height: 15px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 3px;
-  border: 2px solid var(--surface);
-  animation: pop .3s cubic-bezier(.34,1.56,.64,1);
-}
-@keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
-
-/* ── MAIN ──────────────────────────────── */
-.app-main {
-  flex: 1;
-  padding: 14px;
-  padding-bottom: calc(var(--nav-h) + 14px);
-  overflow-y: auto;
-}
-
-.view { display: none; }
-.view.active { display: block; animation: fadeIn .18s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
-
-/* ── CARD ──────────────────────────────── */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.04);
-}
-.card h2 { font-size: 1rem; font-weight: 800; margin-bottom: 12px; }
-.card h3 { font-size: .88rem; font-weight: 700; margin-bottom: 10px; }
-
-/* ── PICK POINT ────────────────────────── */
-.pick-point-card {
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8effe 100%);
-  border: 1px solid #c7d4f7;
-  border-radius: var(--radius);
-  padding: 18px 16px;
-  margin-bottom: 12px;
-}
-.pick-point-card h3 {
-  font-size: .95rem;
-  font-weight: 800;
-  color: var(--brand);
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.pick-point-card select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1.5px solid #c7d4f7;
-  border-radius: var(--radius-sm);
-  font-family: var(--font);
-  font-size: .88rem;
-  background: #fff;
-  color: var(--text);
-  outline: none;
-  margin-bottom: 10px;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
-}
-.pick-point-card select:focus { border-color: var(--brand-mid); }
-
-.btn-save-point {
-  background: var(--brand);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 10px 20px;
-  font-family: var(--font);
-  font-size: .85rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: .15s;
-}
-.btn-save-point:hover { background: var(--brand-mid); box-shadow: 0 4px 12px rgba(38,85,184,.3); }
-
-/* ── DIRECTORY ─────────────────────────── */
-.dir-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-.dir-count { font-size: .72rem; color: var(--text-muted); font-weight: 500; }
-
-.search-wrap {
-  position: relative;
-  margin-bottom: 10px;
-}
-.search-wrap input {
-  width: 100%;
-  padding: 9px 12px 9px 36px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  font-family: var(--font);
-  font-size: .85rem;
-  background: var(--surface-2);
-  color: var(--text);
-  outline: none;
-  transition: .15s;
-}
-.search-wrap input:focus { border-color: var(--brand-mid); background: #fff; box-shadow: 0 0 0 3px var(--brand-glow); }
-.search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-  font-size: 14px;
-  pointer-events: none;
-}
-
-/* Participant rows */
-.participant-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background .12s;
-  border: 1.5px solid transparent;
-}
-.participant-row:hover { background: var(--surface-2); }
-.participant-row.selected {
-  background: var(--brand-light);
-  border-color: #c7d4f7;
-}
-
-.p-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-mid) 100%);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: .75rem;
-  font-weight: 800;
-  flex-shrink: 0;
-}
-
-.p-info { flex: 1; min-width: 0; }
-.p-name { font-weight: 700; font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.p-meta { font-size: .72rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-.p-point-tag {
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  font-size: .65rem;
-  font-weight: 600;
-  padding: 2px 6px;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-/* Selection card */
-.selection-card {
-  background: linear-gradient(135deg, var(--brand-light) 0%, #f0f4ff 100%);
-  border: 1.5px solid #c7d4f7;
-  border-radius: var(--radius-sm);
-  padding: 12px;
-  margin-top: 10px;
-  display: none;
-}
-.selection-card.visible { display: block; animation: fadeIn .15s ease; }
-
-.sel-name { font-size: 1rem; font-weight: 800; color: var(--brand); margin-bottom: 2px; }
-.sel-meta  { font-size: .78rem; color: var(--text-muted); margin-bottom: 10px; }
-
-.action-row { display: flex; gap: 6px; }
-
-.btn-act-primary {
-  flex: 1;
-  background: var(--brand);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 8px 10px;
-  font-family: var(--font);
-  font-size: .75rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: .15s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-.btn-act-primary:hover { background: var(--brand-mid); }
-
-.btn-act-sec {
-  flex: 1;
-  background: #fff;
-  color: var(--brand);
-  border: 1.5px solid #c7d4f7;
-  border-radius: var(--radius-sm);
-  padding: 8px 10px;
-  font-family: var(--font);
-  font-size: .75rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: .15s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-.btn-act-sec:hover { background: var(--brand-light); }
-
-/* ── DEMO CONTROLS ─────────────────────── */
-.demo-bar {
-  background: #111827;
-  color: #9ca3af;
-  padding: 8px 14px;
-  font-size: .7rem;
-  font-family: monospace;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.demo-bar strong { color: #fbbf24; }
-.demo-btn {
-  background: #1f2937;
-  border: 1px solid #374151;
-  border-radius: 4px;
-  color: #d1d5db;
-  padding: 2px 8px;
-  font-size: .68rem;
-  font-family: monospace;
-  cursor: pointer;
-  transition: .12s;
-}
-.demo-btn:hover { background: #374151; color: #fff; }
-.demo-btn.active { background: #fbbf24; color: #111827; border-color: #fbbf24; font-weight: 700; }
-
-/* ── TOAST ─────────────────────────────── */
-.toast-container {
-  position: fixed;
-  bottom: 76px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  align-items: center;
-  pointer-events: none;
-  width: 88%;
-  max-width: 360px;
-}
-.toast {
-  background: #1a1916;
-  color: #fff;
-  padding: 9px 16px;
-  border-radius: 999px;
-  font-size: .8rem;
-  font-weight: 600;
-  animation: toastIn .2s ease, toastOut .2s ease 2.4s forwards;
-  box-shadow: 0 6px 24px rgba(0,0,0,.25);
-  text-align: center;
-  max-width: 100%;
-}
-.toast.success { background: #14532d; }
-.toast.error   { background: #7f1d1d; }
-.toast.info    { background: #1e3a5f; }
-@keyframes toastIn  { from { opacity:0; transform:translateY(8px) scale(.95); } to { opacity:1; transform:none; } }
-@keyframes toastOut { to   { opacity:0; transform:translateY(-4px); } }
-
-/* Placeholder for board/reserve views */
-.placeholder-view {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 40px 20px;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: .88rem;
-}
-.placeholder-view .emoji { font-size: 2.5rem; margin-bottom: 10px; }
-.placeholder-view strong { display: block; color: var(--text); font-size: 1rem; margin-bottom: 6px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1f2937">
+  <meta name="description" content="PredicApp: gestión clara y ordenada de turnos y participantes.">
+  <title>PredicApp</title>
+ 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Merriweather:wght@700&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="/assets/manifest.json">
+  <link rel="icon" href="assets/192x192.png" type="image/png">
+ 
+  <script>
+    window.__FIREBASE_CONFIG__ = {
+      apiKey: "AIzaSyAgnJhMaPPYv9B0OawPH1GGosbJVrmKV5I",
+      authDomain: "predicapp-3470d.firebaseapp.com",
+      projectId: "predicapp-3470d",
+      storageBucket: "predicapp-3470d.firebasestorage.app",
+      messagingSenderId: "337928498725",
+      appId: "1:337928498725:web:82ef2843c3dc5ad274d9cc"
+    };
+  </script>
+ 
+  <!-- Cargar una sola vez el fallback -->
+  <script src="/fallback-nav.js" defer></script>
 </head>
-<body>
-
-<div class="demo-bar">
-  <strong>Demo</strong> Vista como:
-  <button class="demo-btn active" onclick="setRole('admin', this)">🔑 Admin</button>
-  <button class="demo-btn" onclick="setRole('captain', this)">⚓ Capitán</button>
-  <button class="demo-btn" onclick="setRole('user', this)">✅ Publicador</button>
-  <button class="demo-btn" onclick="setRole('pending', this)">⏳ Pendiente</button>
-  <button class="demo-btn" onclick="setRole('guest', this)">👤 Invitado</button>
-</div>
-
-<div class="shell">
-
-  <!-- ══ HEADER ══ -->
+<body data-build="predicapp-v16">
+ 
+<div id="app">
+ 
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
   <header class="app-header">
     <div class="header-top">
-      <div class="app-logo">
-        <div class="logo-icon">📢</div>
-        PredicApp
+      <h1 class="app-logo">📢 PredicApp</h1>
+      <div class="header-session">
+        <span id="role-badge">Participante</span>
+        <button type="button" id="btn-open-auth" class="btn-header-action">Entrar</button>
+        <button type="button" id="btn-logout"    class="btn-header-action" style="display:none">Salir →</button>
       </div>
     </div>
-
-    <div class="header-session">
-      <span class="role-pill" id="role-pill">Super de servicio</span>
-      <button class="btn-session" id="btn-logout" onclick="showToast('Sesión cerrada','info')">Salir →</button>
+    <div class="header-stats">
+      <span class="stat-badge">👥 <span id="count-part">0</span> part.</span>
+      <span class="stat-badge">📍 <span id="count-point">0</span> puntos</span>
+      <span class="stat-badge">🟡 <span id="count-parti">0/0</span> turnos</span>
+      <span class="stat-badge">✅ <span id="count-comp">0/0</span> completos</span>
     </div>
-
-    <div class="header-stats" id="header-stats">
-      <div class="stat-chip">👥 <strong>12</strong> part.</div>
-      <div class="stat-chip">📍 <strong>3</strong> puntos</div>
-      <div class="stat-chip">🟡 <strong>4/21</strong> turnos</div>
-      <div class="stat-chip">🟢 <strong>2/21</strong> completos</div>
-    </div>
+    <span id="session-email" style="display:none"></span>
   </header>
-
-  <!-- BANNER -->
-  <div class="access-gate-banner" id="banner">
-    ⏳ Tu cuenta está pendiente de activación. Contacta a tu capitán (Roberto Suárez) para que apruebe tu cuenta.
-  </div>
-
-  <!-- ══ MAIN ══ -->
-  <main class="app-main">
-
-    <!-- INICIO -->
-    <div id="view-home" class="view active">
-
-      <!-- Panel invitado: inscripción -->
-      <div id="enroll-panel" style="display:none">
-        <div class="card" style="background:linear-gradient(135deg,var(--brand),#2655b8);color:#fff;border:none">
-          <h2 style="color:#fff;margin-bottom:6px">¡Participa en el servicio de campo!</h2>
-          <p style="font-size:.82rem;opacity:.88">Inscríbete para que el capitán te asigne turnos.</p>
-        </div>
-        <div class="card">
-          <div style="margin-bottom:10px">
-            <label style="font-size:.75rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Nombre completo</label>
-            <input style="width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);font-family:var(--font);font-size:.88rem;outline:none" placeholder="Tu nombre…">
-          </div>
-          <div style="margin-bottom:10px">
-            <label style="font-size:.75rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Correo electrónico <span style="font-size:.65rem;background:#e0e7ff;color:#3730a3;padding:1px 5px;border-radius:3px;font-weight:700">NUEVO</span></label>
-            <input type="email" style="width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);font-family:var(--font);font-size:.88rem;outline:none" placeholder="Para vincularte a tu cuenta">
-          </div>
-          <div style="margin-bottom:14px">
-            <label style="font-size:.75rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Punto de predicación</label>
-            <select style="width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);font-family:var(--font);font-size:.88rem;outline:none;background:#fff">
-              <option>Selecciona un punto…</option>
-              <option>Parque Central</option><option>Plaza Norte</option>
-            </select>
-          </div>
-          <button onclick="showToast('Inscripción registrada ✓','success')" style="width:100%;background:var(--brand);color:#fff;border:none;border-radius:var(--radius-sm);padding:11px;font-family:var(--font);font-weight:700;font-size:.9rem;cursor:pointer">Inscribirse</button>
-        </div>
-      </div>
-
-      <!-- Panel pendiente -->
-      <div id="pending-panel" style="display:none">
-        <div class="card" style="background:var(--warn-bg);border-color:#fcd34d">
-          <div style="font-weight:700;color:var(--warn);margin-bottom:4px">⏳ Cuenta pendiente de activación</div>
-          <div style="font-size:.82rem;color:var(--warn)">Contacta a tu capitán <strong>Roberto Suárez</strong> para que apruebe tu cuenta.</div>
-        </div>
-      </div>
-
-      <!-- Seleccionar primer punto -->
-      <div id="pick-point-panel" style="display:none">
-        <div class="pick-point-card">
-          <h3>📍 Selecciona tu punto de predicación</h3>
-          <select>
-            <option value="">Selecciona un punto…</option>
-            <option>Parque Central</option>
-            <option>Plaza Norte</option>
-            <option>Mercado Sur</option>
-            <option>5 y 6</option>
-            <option>San Martín</option>
-            <option>Salón del Reino</option>
-          </select>
-          <button class="btn-save-point" onclick="showToast('Punto guardado correctamente ✓','success')">
-            ✓ Guardar punto
-          </button>
-        </div>
-      </div>
-
-      <!-- Directorio -->
-      <div id="directory-panel" style="display:none">
-        <div class="card">
-          <div class="dir-header">
-            <h3 style="margin:0">Directorio de participantes</h3>
-            <span class="dir-count" id="dir-count">8 participantes</span>
-          </div>
-
-          <div class="search-wrap">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Buscar por nombre, teléfono o punto…" oninput="filterDir(this.value)" id="search-in">
-          </div>
-
-          <div id="dir-list">
-            <!-- filled by JS -->
-          </div>
-
-          <div class="selection-card" id="sel-card">
-            <div class="sel-name" id="sel-name">Ana García</div>
-            <div class="sel-meta" id="sel-meta">Parque Central · 555-0001</div>
-            <div class="action-row">
-              <button class="btn-act-primary" onclick="showToast('Yendo a Reservar…','info')">➕ Reservar</button>
-              <button class="btn-act-sec" onclick="showToast('Cambiando a Participantes…','info')">👤 Ver punto</button>
-              <button class="btn-act-sec" onclick="showToast('Abriendo tablero…','info')">📋 Tablero</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pendientes del capitán -->
-        <div class="card" id="captain-pending" style="display:none">
-          <h3>⏳ Publicadores pendientes <span style="background:var(--danger);color:#fff;border-radius:999px;font-size:.65rem;padding:1px 7px;margin-left:4px">2</span></h3>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)">
-            <div>
-              <div style="font-weight:600;font-size:.88rem">Pedro Alonso</div>
-              <div style="font-size:.72rem;color:var(--text-muted)">pedro@mail.com · Parque Central </div>
-                          </div>
-            <button onclick="showToast('Pedro aprobado ✓ Reserva: Lun 09:00-11:00','success')" style="background:var(--brand);color:#fff;border:none;border-radius:var(--radius-sm);padding:5px 12px;font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">Aprobar</button>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
-            <div>
-              <div style="font-weight:600;font-size:.88rem">Luisa Mendez</div>
-              <div style="font-size:.72rem;color:var(--text-muted)">luisa@mail.com · Parque Central</div>
-            </div>
-            <button onclick="showToast('Luisa aprobada ✓','success')" style="background:var(--brand);color:#fff;border:none;border-radius:var(--radius-sm);padding:5px 12px;font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">Aprobar</button>
-          </div>
-        </div>
-      </div>
-    </div><!-- /home -->
-
-    <!-- TABLERO -->
-    <div id="view-board" class="view">
-      <div class="placeholder-view">
-        <div class="emoji">📋</div>
-        <strong>Tablero de turnos</strong>
-        Vista colapsable por día (Mejora 1) — ver mockup completo
-      </div>
-    </div>
-
-    <!-- RESERVAR -->
-    <div id="view-reserve" class="view">
-      <div class="placeholder-view">
-        <div class="emoji">➕</div>
-        <strong>Formulario de reserva</strong>
-        Participante autoseleccionado (Mejora 4)
-      </div>
-    </div>
-
-    <!-- PARTICIPANTES -->
-    <div id="view-people" class="view">
-      <div class="placeholder-view">
-        <div class="emoji">👤</div>
-        <strong>Participantes del punto</strong>
-        Gestión de lista según rol
-      </div>
-    </div>
-
-    <!-- MIS TURNOS -->
-    <div id="view-myres" class="view">
-      <div class="placeholder-view">
-        <div class="emoji">🗓</div>
-        <strong>Mis turnos</strong>
-        Con estado ✅ Confirmado / ⏳ Pendiente (Mejora 3)
-      </div>
-    </div>
-
-    <!-- ADMIN -->
-    <div id="view-admin" class="view">
-      <div class="placeholder-view">
-        <div class="emoji">⚙️</div>
-        <strong>Panel de administración</strong>
-        Gestión de puntos, capitanes y usuarios
-      </div>
-    </div>
-
-  </main>
-
-  <!-- ══ NAV BAR (BOTTOM) ══ -->
-  <nav class="nav-bar">
-    <button class="nav-tab active" onclick="showView('home',this)">
-      <span class="nav-icon">🏠</span>
-      Inicio
-      <span class="nav-badge" id="nav-badge" style="display:none">2</span>
-    </button>
-    <button class="nav-tab" onclick="showView('board',this)">
-      <span class="nav-icon">📋</span>
-      Tablero
-    </button>
-    <button class="nav-tab" onclick="showView('reserve',this)">
-      <span class="nav-icon">➕</span>
-      Reservar
-    </button>
-    <button class="nav-tab" onclick="showView('people',this)">
-      <span class="nav-icon">👤</span>
-      Partic.
-    </button>
-    <button class="nav-tab" id="tab-myres" onclick="showView('myres',this)">
-      <span class="nav-icon">🗓</span>
-      Mis turnos
-    </button>
-    <button class="nav-tab" id="tab-admin" onclick="showView('admin',this)" style="display:none">
-      <span class="nav-icon">⚙️</span>
-      Admin
-    </button>
+ 
+  <!-- ── Banner acceso pendiente ─────────────────────────────────────────── -->
+  <div id="access-gate-banner" style="display:none"></div>
+ 
+  <!-- ── Navegación ──────────────────────────────────────────────────────── -->
+  <nav class="nav-bar" role="navigation" aria-label="Vistas principales">
+  <button
+    class="nav-tab active"
+    data-view="home"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('home')"
+  ><span class="nav-icon">🏠</span><span class="nav-label">Inicio</span><span id="nav-pending-badge" class="nav-pending-badge" style="display:none"></span></button>
+ 
+  <button
+    class="nav-tab"
+    data-view="board"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('board')"
+  ><span class="nav-icon">📋</span><span class="nav-label">Tablero</span></button>
+ 
+  <button
+    class="nav-tab"
+    data-view="reserve"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('reserve')"
+  ><span class="nav-icon">➕</span><span class="nav-label">Reservar</span></button>
+ 
+  <button
+    class="nav-tab"
+    data-view="people"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('people')"
+  ><span class="nav-icon">👤</span><span class="nav-label">Partic.</span></button>
+ 
+  <button
+    class="nav-tab"
+    data-view="my-reservations"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('my-reservations')"
+  ><span class="nav-icon">🗓</span><span class="nav-label">Mis turnos</span></button>
+ 
+  <button
+    class="nav-tab"
+    data-view="profile"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('profile')"
+  ><span class="nav-icon">⚙️</span><span class="nav-label">Perfil</span></button>
+ 
+  <button
+    class="nav-tab"
+    data-view="admin"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('admin')"
+  ><span class="nav-icon">🔑</span><span class="nav-label">Admin</span></button>
   </nav>
-
-</div>
-<div class="toast-container" id="toasts"></div>
-
-<script>
-// ── Data ──────────────────────────────────────────────────────
-const participants = [
-  { id:'jose1', name:'Jose Guzman', point:'5 y 6',          phone:'555-0100', initials:'JG' },
-  { id:'jose2', name:'Jose Guzman', point:'San Martín',      phone:'555-0101', initials:'JG' },
-  { id:'juan',  name:'Juan Cárdenas', point:'San Martín',    phone:'555-0102', initials:'JC' },
-  { id:'luis',  name:'Luis Robles',   point:'Salón del Reino', phone:'',        initials:'LR' },
-  { id:'pedro', name:'Pedro Pérez',   point:'Salón del Reino', phone:'555-0104', initials:'PP' },
-  { id:'ana',   name:'Ana García',    point:'Parque Central', phone:'555-0001', initials:'AG' },
-  { id:'ben',   name:'Benito López',  point:'Parque Central', phone:'555-0002', initials:'BL' },
-  { id:'car',   name:'Carlos Ruiz',   point:'Plaza Norte',    phone:'555-0003', initials:'CR' },
-];
-
-let currentSelected = null;
-
-function renderDir(list) {
-  const el = document.getElementById('dir-list');
-  el.innerHTML = '';
-  list.forEach(p => {
-    const row = document.createElement('div');
-    row.className = 'participant-row' + (currentSelected === p.id ? ' selected' : '');
-    row.onclick = () => selectParticipant(p);
-    row.innerHTML = `
-      <div class="p-avatar">${p.initials}</div>
-      <div class="p-info">
-        <div class="p-name">${p.name}</div>
-        <div class="p-meta">${p.phone || 'Sin teléfono'}</div>
+ 
+  <!-- ── Contenido principal ─────────────────────────────────────────────── -->
+  <main class="app-main">
+ 
+    <!-- ════════ VISTA: INICIO ════════ -->
+    <div id="view-home">
+ 
+      <!-- Panel invitado: inscripción pública -->
+      <div id="guest-enroll-panel">
+        <h2>¡Participa en el servicio de campo!</h2>
+        <p style="font-size:.88rem;margin-bottom:14px;color:#374151">
+          Inscríbete para que el capitán de tu punto te asigne turnos de predicación.
+        </p>
+        <div class="form-group">
+          <label for="enroll-display-name">Nombre completo</label>
+          <input type="text" id="enroll-display-name" placeholder="Tu nombre…" maxlength="80">
+        </div>
+        <div class="form-group">
+          <label for="enroll-phone">Teléfono (opcional)</label>
+          <input type="text" id="enroll-phone" placeholder="Ej: 555-1234" maxlength="30">
+        </div>
+        <div class="form-group">
+          <label for="enroll-email">Correo electrónico (opcional)</label>
+          <input type="email" id="enroll-email" placeholder="Para vincularte mejor a tu cuenta" maxlength="120">
+        </div>
+        <div class="form-group">
+          <label for="enroll-point">Punto de predicación</label>
+          <select id="enroll-point"><option value="">Cargando puntos…</option></select>
+        </div>
+        <div class="form-group">
+          <label for="enroll-day">Día preferido</label>
+          <select id="enroll-day"><option value="">Selecciona un día…</option></select>
+        </div>
+        <div class="form-group">
+          <label for="enroll-time">Horario preferido</label>
+          <select id="enroll-time"><option value="">Selecciona una hora…</option></select>
+        </div>
+        <button type="button" id="btn-enroll-submit" class="btn-primary w-full">Inscribirse</button>
+        <p style="font-size:.78rem;color:#6b7280;margin-top:8px;text-align:center">
+          ¿Ya tienes cuenta? <button type="button" id="btn-profile-go-login" style="background:none;border:none;color:#2563eb;cursor:pointer;font-size:.78rem">Inicia sesión</button>
+        </p>
       </div>
-      <div class="p-point-tag">${p.point}</div>
-    `;
-    el.appendChild(row);
-  });
-  document.getElementById('dir-count').textContent = `${list.length} participante${list.length !== 1 ? 's' : ''}`;
-}
-
-function filterDir(q) {
-  const f = q.toLowerCase();
-  const filtered = f
-    ? participants.filter(p => [p.name, p.phone, p.point].join(' ').toLowerCase().includes(f))
-    : participants;
-  renderDir(filtered);
-}
-
-function selectParticipant(p) {
-  currentSelected = p.id;
-  document.getElementById('sel-name').textContent = p.name;
-  document.getElementById('sel-meta').textContent = `${p.point}${p.phone ? ' · ' + p.phone : ''}`;
-  document.getElementById('sel-card').classList.add('visible');
-  renderDir(participants); // re-render to update selected highlight
-}
-
-// ── Roles ─────────────────────────────────────────────────────
-const ROLES = {
-  admin: {
-    pill: 'Super de servicio', pillStyle: 'background:rgba(255,255,255,.2)',
-    banner: false, pickPoint: false, directory: true,
-    captainPending: false, adminTab: true, stats: true, navBadge: false,
-    enroll: false, pendingPanel: false,
-  },
-  captain: {
-    pill: 'Capitán de punto', pillStyle: 'background:rgba(255,220,100,.25)',
-    banner: false, pickPoint: false, directory: true,
-    captainPending: true, adminTab: true, stats: true, navBadge: true,
-    enroll: false, pendingPanel: false,
-  },
-  user: {
-    pill: 'Publicador', pillStyle: 'background:rgba(255,255,255,.18)',
-    banner: false, pickPoint: false, directory: true,
-    captainPending: false, adminTab: false, stats: true, navBadge: false,
-    enroll: false, pendingPanel: false,
-  },
-  pending: {
-    pill: 'Publicador', pillStyle: 'background:rgba(255,200,60,.25)',
-    banner: true, pickPoint: true, directory: false,
-    captainPending: false, adminTab: false, stats: false, navBadge: false,
-    enroll: false, pendingPanel: true,
-  },
-  guest: {
-    pill: '', pillStyle: '',
-    banner: false, pickPoint: false, directory: false,
-    captainPending: false, adminTab: false, stats: false, navBadge: false,
-    enroll: true, pendingPanel: false,
-  },
-};
-
-function setRole(role, btn) {
-  const cfg = ROLES[role];
-  document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-
-  const pill = document.getElementById('role-pill');
-  pill.textContent = cfg.pill;
-  pill.style = cfg.pillStyle;
-  pill.style.display = cfg.pill ? '' : 'none';
-
-  document.getElementById('btn-logout').style.display = role !== 'guest' ? '' : 'none';
-  document.getElementById('banner').style.display = cfg.banner ? '' : 'none';
-  document.getElementById('header-stats').style.display = cfg.stats ? '' : 'none';
-  document.getElementById('pick-point-panel').style.display = cfg.pickPoint ? '' : 'none';
-  document.getElementById('directory-panel').style.display = cfg.directory ? '' : 'none';
-  document.getElementById('captain-pending').style.display = cfg.captainPending ? '' : 'none';
-  document.getElementById('tab-admin').style.display = cfg.adminTab ? '' : 'none';
-  document.getElementById('nav-badge').style.display = cfg.navBadge ? '' : 'none';
-  document.getElementById('enroll-panel').style.display = cfg.enroll ? '' : 'none';
-  document.getElementById('pending-panel').style.display = cfg.pendingPanel ? '' : 'none';
-
-  showView('home', document.querySelector('.nav-tab'));
-  if (cfg.directory) renderDir(participants);
-  const msg = { admin:'Vista: Super de servicio', captain:'Vista: Capitán de punto', user:'Vista: Publicador', pending:'Vista: Cuenta pendiente', guest:'Vista: Invitado' };
-  showToast(msg[role], 'info');
-}
-
-// ── Navigation ────────────────────────────────────────────────
-function showView(id, tab) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('view-' + id)?.classList.add('active');
-  tab?.classList.add('active');
-}
-
-// ── Toast ─────────────────────────────────────────────────────
-function showToast(msg, type='info') {
-  const c = document.getElementById('toasts');
-  const t = document.createElement('div');
-  t.className = `toast ${type}`;
-  t.textContent = msg;
-  c.appendChild(t);
-  setTimeout(() => t.remove(), 2700);
-}
-
-// ── Init ──────────────────────────────────────────────────────
-renderDir(participants);
-document.getElementById('sel-card').classList.add('visible');
-selectParticipant(participants[0]);
-</script>
+ 
+      <!-- Panel espera aprobación -->
+      <div id="home-pending-wait" style="display:none">
+        ⏳ Tu cuenta está pendiente de aprobación.
+        <span id="logged-pick-point-subtitle"></span>
+      </div>
+ 
+      <!-- Panel seleccionar primer punto (usuario recién registrado) -->
+      <div id="logged-pick-point-panel" style="display:none" class="card pick-point-card">
+        <h3>📍 ¿En qué punto predicas?</h3>
+        <p style="font-size:.88rem;color:#4b5563;margin-bottom:12px">Selecciona tu punto para que el capitán pueda asignarte turnos.</p>
+        <div class="form-group">
+          <select id="complete-point-select"><option value="">Selecciona un punto…</option></select>
+        </div>
+        <button type="button" id="btn-complete-first-point" class="btn-primary">✓ Guardar punto</button>
+      </div>
+ 
+      <!-- Contenido principal del directorio -->
+      <div id="home-main-content">
+        <div class="card">
+          <h3>Directorio de participantes</h3>
+          <div class="directory-search form-group">
+            <input type="text" id="home-participant-search" placeholder="Buscar por nombre, teléfono o punto…">
+          </div>
+          <div id="home-participant-list-wrap">
+            <!-- JS renderiza filas aquí -->
+          </div>
+          <span id="home-participant-count" class="view-muted" style="font-size:.8rem;display:block;margin-top:4px;margin-bottom:4px"></span>
+          <!-- select oculto para compatibilidad con render-home.js -->
+          <select id="home-participant-list" size="1" style="display:none"></select>
+ 
+          <div class="selection-card">
+            <strong id="home-participant-name">Sin selección</strong>
+            <div id="home-participant-point" class="view-muted" style="font-size:.85rem;margin-bottom:4px">Selecciona un participante para ver su punto.</div>
+            <div id="home-participant-phone" class="view-muted" style="font-size:.85rem;margin-bottom:10px"></div>
+            <div class="selection-actions">
+              <button type="button" id="btn-home-go-reserve" class="btn-primary"   disabled>Reservar turno</button>
+              <button type="button" id="btn-home-go-people"  class="btn-secondary" disabled>Ver participantes</button>
+              <button type="button" id="btn-home-go-board"   class="btn-secondary" disabled>Ver tablero</button>
+            </div>
+          </div>
+        </div>
+ 
+        <!-- Pendientes de aprobación del capitán -->
+        <div id="captain-pending-approval" style="display:none" class="card">
+          <h3>⏳ Publicadores pendientes de aprobación</h3>
+          <ul id="captain-pending-users-list" class="admin-list"></ul>
+        </div>
+      </div>
+    </div><!-- /view-home -->
+ 
+    <!-- ════════ VISTA: TABLERO ════════ -->
+    <div id="view-board" style="display:none">
+      <div class="point-selector">
+        <label for="select-point">Punto:</label>
+        <select id="select-point" style="flex:1;max-width:260px"><option value="">Selecciona un punto…</option></select>
+      </div>
+      <div class="board-wrapper">
+        <table class="board-table" aria-label="Tablero de turnos">
+          <thead>
+            <tr>
+              <th>Horario</th>
+              <th>Lun</th><th>Mar</th><th>Mié</th>
+              <th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th>
+            </tr>
+          </thead>
+          <tbody id="board-tbody"></tbody>
+        </table>
+      </div>
+      <div id="board-mobile"></div>
+    </div><!-- /view-board -->
+ 
+    <!-- ════════ VISTA: RESERVAR ════════ -->
+    <div id="view-reserve" style="display:none">
+      <div class="card">
+        <h2>Reservar turno</h2>
+        <div class="form-group">
+          <label for="select-day">Día</label>
+          <select id="select-day"></select>
+        </div>
+        <div class="form-group">
+          <label for="select-time">Horario</label>
+          <select id="select-time"></select>
+        </div>
+        <div id="selected-slot-summary" style="font-size:.85rem;color:#4b5563;margin-bottom:12px;padding:8px;background:#f1f5f9;border-radius:6px">
+          Selecciona un día y un horario.
+        </div>
+        <div class="form-group">
+          <label for="sel-participant">Participante principal</label>
+          <select id="sel-participant"></select>
+        </div>
+        <div class="form-group">
+          <label for="sel-companion1">Compañero 1</label>
+          <select id="sel-companion1"></select>
+        </div>
+        <div class="form-group">
+          <label for="sel-companion2">Compañero 2 (opcional)</label>
+          <select id="sel-companion2"></select>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" id="btn-save-reserve-form"     class="btn-primary">Guardar reserva</button>
+          <button type="button" id="btn-cancel-my-reservation"  class="btn-danger"  disabled>Cancelar mi reserva</button>
+        </div>
+      </div>
+    </div><!-- /view-reserve -->
+ 
+    <!-- ════════ VISTA: PARTICIPANTES ════════ -->
+    <div id="view-people" style="display:none">
+      <div class="card">
+        <h2>Participantes</h2>
+        <p id="participants-permission-hint" class="view-muted mb-12" style="font-size:.85rem"></p>
+        <button type="button" id="btn-open-add-part" class="btn-primary mb-12">+ Agregar participante</button>
+        <ul id="participants-list" class="admin-list"></ul>
+      </div>
+    </div><!-- /view-people -->
+ 
+    <!-- ════════ VISTA: MIS TURNOS ════════ -->
+    <div id="view-my-reservations" style="display:none">
+      <div class="card">
+        <h2>Mis reservas activas</h2>
+        <ul id="my-reservations-list" class="admin-list">
+          <li class="list-empty">Inicia sesión para ver tus reservas.</li>
+        </ul>
+      </div>
+    </div><!-- /view-my-reservations -->
+ 
+    <!-- ════════ VISTA: PERFIL ════════ -->
+    <div id="view-profile" style="display:none">
+      <div class="card text-center">
+        <div class="profile-avatar" id="profile-avatar-initials">?</div>
+        <strong id="profile-display-name" style="font-size:1.1rem">Sin sesión</strong>
+        <p id="profile-email" class="view-muted" style="font-size:.85rem;margin:4px 0 10px">Inicia sesión para ver tu perfil.</p>
+        <span id="profile-status-pill" class="profile-status-pill">Participante</span>
+      </div>
+      <div class="card">
+        <p class="profile-detail"><strong>Rol:</strong> <span id="profile-role-detail">—</span></p>
+        <p class="profile-detail"><strong>Punto asignado:</strong> <span id="profile-assigned-point">—</span></p>
+        <p class="profile-detail"><strong>Capitán:</strong> <span id="profile-subadmin">—</span></p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+        <button type="button" id="btn-profile-logout"   class="btn-danger">Cerrar sesión</button>
+        <button type="button" id="btn-profile-go-enroll" class="btn-secondary">Formulario de inscripción</button>
+      </div>
+    </div><!-- /view-profile -->
+ 
+    <!-- ════════ VISTA: ADMIN ════════ -->
+    <div id="view-admin" style="display:none">
+ 
+      <!-- Puntos -->
+      <div class="card">
+        <h2>⚙️ Panel de administración</h2>
+        <h3>Puntos de predicación</h3>
+        <ul id="list-points" class="admin-list mb-12"></ul>
+        <button type="button" id="btn-add-point" class="btn-primary">+ Crear punto</button>
+      </div>
+ 
+      <!-- Cuentas pendientes de acceso -->
+      <div class="card">
+        <h3>🔐 Cuentas pendientes de activación</h3>
+        <ul id="list-pending-approval" class="admin-list"></ul>
+      </div>
+ 
+      <!-- Asignar capitán -->
+      <div class="card">
+        <h3>👮 Asignar capitán de punto</h3>
+        <div class="form-group" style="display:none">
+          <label for="subadmin-uid">UID del usuario (Firebase Auth)</label>
+          <input type="text" id="subadmin-uid" placeholder="Opcional (avanzado)">
+        </div>
+        <div class="form-group">
+          <label for="subadmin-email">Correo del capitán</label>
+          <input type="email" id="subadmin-email" placeholder="correo@ejemplo.com">
+        </div>
+        <div class="form-group">
+          <label for="subadmin-name">Nombre del capitán</label>
+          <input type="text" id="subadmin-name" placeholder="Nombre completo">
+        </div>
+        <div class="form-group">
+          <label for="subadmin-point">Punto asignado</label>
+          <select id="subadmin-point"><option value="">Selecciona un punto…</option></select>
+        </div>
+        <button type="button" id="btn-create-subadmin" class="btn-primary">Asignar o invitar capitán</button>
+      </div>
+ 
+      <!-- Exportar PDF -->
+      <div class="card">
+        <h3>📄 Exportar reportes</h3>
+        <p class="view-muted mb-12" style="font-size:.85rem">Exporta todos los reportes del punto seleccionado como PDF.</p>
+        <button type="button" id="btn-export-all-pdf" class="btn-secondary">Exportar todos los reportes (PDF)</button>
+      </div>
+ 
+    </div><!-- /view-admin -->
+ 
+  </main><!-- /app-main -->
+</div><!-- /app -->
+ 
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODALES
+══════════════════════════════════════════════════════════════════════════ -->
+ 
+<!-- Modal: autenticación -->
+<div id="modal-auth" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-auth-title" aria-hidden="true">
+  <div class="modal-box">
+    <button type="button" class="modal-close" data-close-modal="modal-auth" aria-label="Cerrar">✕</button>
+    <h2 id="modal-auth-title">Iniciar sesión</h2>
+    <div class="form-group">
+      <label for="auth-email">Correo electrónico</label>
+      <input type="email" id="auth-email" placeholder="correo@ejemplo.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label for="auth-password">Contraseña</label>
+      <input type="password" id="auth-password" placeholder="Contraseña" autocomplete="current-password">
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="btn-login" class="btn-primary w-full">Entrar</button>
+    </div>
+    <div style="text-align:center;margin-top:12px">
+      <span style="font-size:.82rem;color:#6b7280">— o —</span>
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="btn-google-signin" class="btn-secondary w-full" style="display:flex;align-items:center;justify-content:center;gap:8px">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google">
+        Continuar con Google
+      </button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal: agregar participante -->
+<div id="modal-participant" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-part-title" aria-hidden="true">
+  <div class="modal-box">
+    <button type="button" class="modal-close" data-close-modal="modal-participant" aria-label="Cerrar">✕</button>
+    <h2 id="modal-part-title">Agregar participante</h2>
+    <div class="form-group">
+      <label for="inp-part-name">Nombre completo</label>
+      <input type="text" id="inp-part-name" placeholder="Nombre del participante" maxlength="80">
+    </div>
+    <div class="form-group">
+      <label for="inp-part-phone">Teléfono (opcional)</label>
+      <input type="text" id="inp-part-phone" placeholder="Ej: 555-1234" maxlength="30">
+    </div>
+    <div class="modal-actions">
+      <button type="button" data-close-modal="modal-participant" class="btn-secondary">Cancelar</button>
+      <button type="button" id="btn-save-part" class="btn-primary">Guardar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal: reporte de turno -->
+<div id="modal-report" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-report-title" aria-hidden="true">
+  <div class="modal-box">
+    <button type="button" class="modal-close" data-close-modal="modal-report" aria-label="Cerrar">✕</button>
+    <h2 id="modal-report-title">📋 Reporte de turno</h2>
+    <p id="report-slot-label" style="font-size:.82rem;color:#4b5563;margin-bottom:14px"></p>
+ 
+    <div class="form-group">
+      <label for="report-date">Fecha del turno</label>
+      <input type="date" id="report-date">
+    </div>
+    <div class="form-group">
+      <label for="report-start-time">Hora de inicio real</label>
+      <input type="time" id="report-start-time">
+    </div>
+    <div class="form-group">
+      <label for="report-fulfilled">¿Se cumplió el turno?</label>
+      <select id="report-fulfilled">
+        <option value="true">Sí</option>
+        <option value="false">No</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="report-conversation">¿Conversaciones iniciadas?</label>
+      <select id="report-conversation">
+        <option value="false">No</option>
+        <option value="true">Sí</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="report-bible-study">¿Arreglos para estudio bíblico?</label>
+      <select id="report-bible-study">
+        <option value="false">No</option>
+        <option value="true">Sí</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="report-revisits">Revisitas</label>
+      <input type="number" id="report-revisits" min="0" value="0">
+    </div>
+    <div class="form-group">
+      <label for="report-studies">Estudios bíblicos activos</label>
+            <input type="number" id="report-studies" min="0" value="0">
+    </div>
+    <div class="form-group">
+      <label for="report-notes">Notas (máx. 500 caracteres)</label>
+      <textarea id="report-notes" maxlength="500" placeholder="Observaciones…"></textarea>
+    </div>
+ 
+    <div class="modal-actions">
+      <button type="button" id="btn-remove-report"   class="btn-danger">Eliminar</button>
+      <button type="button" id="btn-download-report" class="btn-secondary">Descargar PDF</button>
+      <button type="button" id="btn-save-report"     class="btn-primary">Guardar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal: reasignación de punto -->
+<div id="modal-reassign" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-reassign-title" aria-hidden="true">
+  <div class="modal-box">
+    <button type="button" class="modal-close" data-close-modal="modal-reassign" aria-label="Cerrar">✕</button>
+    <h2 id="modal-reassign-title">⚠️ Cambiar de punto</h2>
+    <p style="font-size:.9rem;margin-bottom:12px">
+      Tienes <strong id="reassign-affected-count">0</strong> reserva(s) activa(s) en
+      <strong id="reassign-from-point"></strong>.
+    </p>
+    <p style="font-size:.9rem;margin-bottom:16px">
+      Si confirmas, se cancelarán y quedarás asignado a
+      <strong id="reassign-to-point"></strong>.
+    </p>
+    <div class="modal-actions">
+      <button type="button" id="btn-reassign-cancel"  class="btn-secondary">Cancelar</button>
+      <button type="button" id="btn-reassign-confirm" class="btn-primary">Confirmar cambio</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- ─── Scripts ─────────────────────────────────────────────────────────────── -->
+<script type="module" src="app.js"></script>
+ 
 </body>
 </html>
