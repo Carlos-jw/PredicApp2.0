@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1f2937">
+  <meta name="theme-color" content="#1a4a8a">
   <meta name="description" content="PredicApp: gestión clara y ordenada de turnos y participantes.">
   <title>PredicApp</title>
- 
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Merriweather:wght@700&display=swap">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="style-v3.css">
   <link rel="manifest" href="/assets/manifest.json">
   <link rel="icon" href="assets/192x192.png" type="image/png">
- 
+
   <script>
     window.__FIREBASE_CONFIG__ = {
       apiKey: "AIzaSyAgnJhMaPPYv9B0OawPH1GGosbJVrmKV5I",
@@ -24,456 +24,664 @@
       appId: "1:337928498725:web:82ef2843c3dc5ad274d9cc"
     };
   </script>
- 
-  <!-- Cargar una sola vez el fallback -->
+
   <script src="/fallback-nav.js" defer></script>
 </head>
 <body data-build="predicapp-v16">
- 
+
 <div id="app">
- 
-  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+
+  <!-- ── HEADER ──────────────────────────────────────────────────── -->
   <header class="app-header">
-    <div class="header-top">
-      <h1 class="app-logo">📢 PredicApp</h1>
+    <div class="header-inner">
+      <div class="header-brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" fill="rgba(255,255,255,0.15)"/>
+          <path d="M8 12l2.5 2.5L16 9" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-name">PredicApp</span>
+      </div>
+
+      <div class="header-center" id="header-stats-row">
+        <span class="stat-chip">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm5 5a5 5 0 0 0-10 0h10z"/></svg>
+          <span id="count-part">0</span>
+        </span>
+        <span class="stat-chip">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C5.8 0 4 1.8 4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 10c-4.4 0-8 2-8 3v1h16v-1c0-1-3.6-3-8-3z"/><circle cx="12.5" cy="4.5" r="2.5"/></svg>
+          <span id="count-point">0</span> pts
+        </span>
+        <span class="stat-chip stat-chip--warn">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M5 1v2M11 1v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span id="count-parti">0/0</span>
+        </span>
+        <span class="stat-chip stat-chip--ok">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.5 3.5L6 11 2.5 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          <span id="count-comp">0/0</span>
+        </span>
+      </div>
+
       <div class="header-session">
-        <span id="role-badge">Participante</span>
-        <button type="button" id="btn-open-auth" class="btn-header-action">Entrar</button>
-        <button type="button" id="btn-logout"    class="btn-header-action" style="display:none">Salir →</button>
+        <span id="role-badge" class="role-pill">Invitado</span>
+        <button type="button" id="btn-open-auth" class="btn-header">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          Entrar
+        </button>
+        <button type="button" id="btn-logout" class="btn-header btn-header--ghost" style="display:none">
+          Salir
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
+        </button>
       </div>
     </div>
-    <div class="header-stats">
-      <span class="stat-badge">👥 <span id="count-part">0</span> part.</span>
-      <span class="stat-badge">📍 <span id="count-point">0</span> puntos</span>
-      <span class="stat-badge">🟡 <span id="count-parti">0/0</span> turnos</span>
-      <span class="stat-badge">✅ <span id="count-comp">0/0</span> completos</span>
-    </div>
-    <span id="session-email" style="display:none"></span>
   </header>
- 
-  <!-- ── Banner acceso pendiente ─────────────────────────────────────────── -->
-  <div id="access-gate-banner" style="display:none"></div>
- 
-  <!-- ── Navegación ──────────────────────────────────────────────────────── -->
+
+  <!-- ── BANNER ACCESO PENDIENTE ──────────────────────────────────── -->
+  <div id="access-gate-banner" class="access-banner" style="display:none"></div>
+
+  <!-- ── NAVEGACIÓN ────────────────────────────────────────────────── -->
   <nav class="nav-bar" role="navigation" aria-label="Vistas principales">
-  <button
-    class="nav-tab active"
-    data-view="home"
-    type="button"
-    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('home')"
-  ><span class="nav-icon">🏠</span><span class="nav-label">Inicio</span><span id="nav-pending-badge" class="nav-pending-badge" style="display:none"></span></button>
- 
-  <button
-    class="nav-tab"
-    data-view="board"
-    type="button"
-    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('board')"
-  ><span class="nav-icon">📋</span><span class="nav-label">Tablero</span></button>
- 
-  <button
-    class="nav-tab"
-    data-view="reserve"
-    type="button"
-    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('reserve')"
-  ><span class="nav-icon">➕</span><span class="nav-label">Reservar</span></button>
- 
-  <button
-    class="nav-tab"
-    data-view="people"
-    type="button"
-    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('people')"
-  ><span class="nav-icon">👤</span><span class="nav-label">Partic.</span></button>
- 
-  <button
-    class="nav-tab"
-    data-view="my-reservations"
-    type="button"
-    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('my-reservations')"
-  ><span class="nav-icon">🗓</span><span class="nav-label">Mis turnos</span></button>
- 
-  <button
-    class="nav-tab"
-    data-view="profile"
-    type="button"
-    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('profile')"
-  ><span class="nav-icon">⚙️</span><span class="nav-label">Perfil</span></button>
- 
-  <button
-    class="nav-tab"
-    data-view="admin"
-    type="button"
-    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('admin')"
-  ><span class="nav-icon">🔑</span><span class="nav-label">Admin</span></button>
+    <button class="nav-tab active" data-view="home" type="button"
+      onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('home')">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h4a1 1 0 001-1v-3h2v3a1 1 0 001 1h4a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+      <span class="nav-label">Inicio</span>
+      <span id="nav-pending-badge" class="nav-badge" style="display:none"></span>
+    </button>
+
+    <button class="nav-tab" data-view="board" type="button"
+      onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('board')">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z" clip-rule="evenodd"/></svg>
+      <span class="nav-label">Tablero</span>
+    </button>
+
+    <button class="nav-tab nav-tab--cta" data-view="reserve" type="button"
+      onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('reserve')">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/></svg>
+      <span class="nav-label">Reservar</span>
+    </button>
+
+    <button class="nav-tab" data-view="my-reservations" type="button"
+      onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('my-reservations')">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+      <span class="nav-label">Mis turnos</span>
+    </button>
+
+    <button class="nav-tab" data-view="people" type="button"
+      onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('people')">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+      <span class="nav-label">Partic.</span>
+    </button>
+
+    <button class="nav-tab" data-view="profile" type="button"
+      onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('profile')">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      <span class="nav-label">Perfil</span>
+    </button>
+
+    <button class="nav-tab" data-view="admin" type="button"
+      onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('admin')">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/></svg>
+      <span class="nav-label">Admin</span>
+    </button>
   </nav>
- 
-  <!-- ── Contenido principal ─────────────────────────────────────────────── -->
+
+  <!-- ── CONTENIDO PRINCIPAL ────────────────────────────────────────── -->
   <main class="app-main">
- 
-    <!-- ════════ VISTA: INICIO ════════ -->
+
+    <!-- ════ VISTA: INICIO ════ -->
     <div id="view-home">
- 
+
       <!-- Panel invitado: inscripción pública -->
-      <div id="guest-enroll-panel">
-        <h2>¡Participa en el servicio de campo!</h2>
-        <p style="font-size:.88rem;margin-bottom:14px;color:#374151">
-          Inscríbete para que el capitán de tu punto te asigne turnos de predicación.
-        </p>
-        <div class="form-group">
-          <label for="enroll-display-name">Nombre completo</label>
-          <input type="text" id="enroll-display-name" placeholder="Tu nombre…" maxlength="80">
-        </div>
-        <div class="form-group">
-          <label for="enroll-phone">Teléfono (opcional)</label>
-          <input type="text" id="enroll-phone" placeholder="Ej: 555-1234" maxlength="30">
-        </div>
-        <div class="form-group">
-          <label for="enroll-email">Correo electrónico (opcional)</label>
-          <input type="email" id="enroll-email" placeholder="Para vincularte mejor a tu cuenta" maxlength="120">
-        </div>
-        <div class="form-group">
-          <label for="enroll-point">Punto de predicación</label>
-          <select id="enroll-point"><option value="">Cargando puntos…</option></select>
-        </div>
-        <div class="form-group">
-          <label for="enroll-day">Día preferido</label>
-          <select id="enroll-day"><option value="">Selecciona un día…</option></select>
-        </div>
-        <div class="form-group">
-          <label for="enroll-time">Horario preferido</label>
-          <select id="enroll-time"><option value="">Selecciona una hora…</option></select>
-        </div>
-        <button type="button" id="btn-enroll-submit" class="btn-primary w-full">Inscribirse</button>
-        <p style="font-size:.78rem;color:#6b7280;margin-top:8px;text-align:center">
-          ¿Ya tienes cuenta? <button type="button" id="btn-profile-go-login" style="background:none;border:none;color:#2563eb;cursor:pointer;font-size:.78rem">Inicia sesión</button>
-        </p>
-      </div>
- 
-      <!-- Panel espera aprobación -->
-      <div id="home-pending-wait" style="display:none">
-        ⏳ Tu cuenta está pendiente de aprobación.
-        <span id="logged-pick-point-subtitle"></span>
-      </div>
- 
-      <!-- Panel seleccionar primer punto (usuario recién registrado) -->
-      <div id="logged-pick-point-panel" style="display:none" class="card pick-point-card">
-        <h3>📍 ¿En qué punto predicas?</h3>
-        <p style="font-size:.88rem;color:#4b5563;margin-bottom:12px">Selecciona tu punto para que el capitán pueda asignarte turnos.</p>
-        <div class="form-group">
-          <select id="complete-point-select"><option value="">Selecciona un punto…</option></select>
-        </div>
-        <button type="button" id="btn-complete-first-point" class="btn-primary">✓ Guardar punto</button>
-      </div>
- 
-      <!-- Contenido principal del directorio -->
-      <div id="home-main-content">
-        <div class="card">
-          <h3>Directorio de participantes</h3>
-          <div class="directory-search form-group">
-            <input type="text" id="home-participant-search" placeholder="Buscar por nombre, teléfono o punto…">
+      <div id="guest-enroll-panel" class="enroll-panel">
+        <div class="enroll-panel__hero">
+          <div class="enroll-panel__icon" aria-hidden="true">
+            <svg viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="20" fill="#1a4a8a"/>
+              <path d="M13 20l4.5 4.5L27 15" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
-          <div id="home-participant-list-wrap">
-            <!-- JS renderiza filas aquí -->
+          <div>
+            <h2 class="enroll-panel__title">¡Participa en el servicio de campo!</h2>
+            <p class="enroll-panel__sub">Inscríbete para que el capitán te asigne turnos de predicación.</p>
           </div>
-          <span id="home-participant-count" class="view-muted" style="font-size:.8rem;display:block;margin-top:4px;margin-bottom:4px"></span>
-          <!-- select oculto para compatibilidad con render-home.js -->
-          <select id="home-participant-list" size="1" style="display:none"></select>
- 
-          <div class="selection-card">
-            <strong id="home-participant-name">Sin selección</strong>
-            <div id="home-participant-point" class="view-muted" style="font-size:.85rem;margin-bottom:4px">Selecciona un participante para ver su punto.</div>
-            <div id="home-participant-phone" class="view-muted" style="font-size:.85rem;margin-bottom:10px"></div>
-            <div class="selection-actions">
-              <button type="button" id="btn-home-go-reserve" class="btn-primary"   disabled>Reservar turno</button>
-              <button type="button" id="btn-home-go-people"  class="btn-secondary" disabled>Ver participantes</button>
-              <button type="button" id="btn-home-go-board"   class="btn-secondary" disabled>Ver tablero</button>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="enroll-display-name">Nombre completo <span class="required">*</span></label>
+            <input type="text" id="enroll-display-name" placeholder="Tu nombre completo" maxlength="80" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="enroll-phone">Teléfono <span class="optional">(opcional)</span></label>
+            <input type="tel" id="enroll-phone" placeholder="Ej: 300 123 4567" maxlength="30" autocomplete="tel">
+          </div>
+          <div class="form-group form-group--full">
+            <label for="enroll-email">Correo electrónico <span class="optional">(opcional)</span></label>
+            <input type="email" id="enroll-email" placeholder="Para vincular tu cuenta" maxlength="120" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="enroll-point">Punto de predicación <span class="required">*</span></label>
+            <div class="select-wrapper">
+              <select id="enroll-point"><option value="">Selecciona un punto…</option></select>
+              <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="enroll-day">Día preferido <span class="required">*</span></label>
+            <div class="select-wrapper">
+              <select id="enroll-day"><option value="">Selecciona un día…</option></select>
+              <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="enroll-time">Horario preferido <span class="required">*</span></label>
+            <div class="select-wrapper">
+              <select id="enroll-time"><option value="">Selecciona una hora…</option></select>
+              <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
             </div>
           </div>
         </div>
- 
-        <!-- Pendientes de aprobación del capitán -->
-        <div id="captain-pending-approval" style="display:none" class="card">
-          <h3>⏳ Publicadores pendientes de aprobación</h3>
-          <ul id="captain-pending-users-list" class="admin-list"></ul>
+        <button type="button" id="btn-enroll-submit" class="btn-primary btn--full btn--lg">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Inscribirse
+        </button>
+        <p class="enroll-panel__login-hint">
+          ¿Ya tienes cuenta?
+          <button type="button" id="btn-profile-go-login" class="link-btn">Inicia sesión aquí</button>
+        </p>
+      </div>
+
+      <!-- Banner pendiente de aprobación -->
+      <div id="home-pending-wait" class="status-banner status-banner--warn" style="display:none">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+        <span>Tu cuenta está pendiente de aprobación. <span id="logged-pick-point-subtitle"></span></span>
+      </div>
+
+      <!-- Panel primer punto -->
+      <div id="logged-pick-point-panel" class="card card--accent" style="display:none">
+        <div class="card-icon-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <h3>¿En qué punto predicas?</h3>
+        </div>
+        <p class="card-sub">Selecciona tu punto para que el capitán pueda asignarte turnos.</p>
+        <div class="form-group">
+          <div class="select-wrapper">
+            <select id="complete-point-select"><option value="">Selecciona un punto…</option></select>
+            <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <button type="button" id="btn-complete-first-point" class="btn-primary">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          Guardar punto
+        </button>
+      </div>
+
+      <!-- Contenido principal del directorio -->
+      <div id="home-main-content">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Directorio de participantes</h3>
+          </div>
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+            <input type="search" id="home-participant-search" placeholder="Buscar por nombre, teléfono o punto…" class="search-input">
+          </div>
+
+          <div id="home-participant-list-wrap" class="participant-list"></div>
+          <span id="home-participant-count" class="list-count"></span>
+          <select id="home-participant-list" size="1" style="display:none"></select>
+
+          <div class="selection-card" id="selection-card">
+            <div class="selection-card__empty" id="selection-empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              <span>Selecciona un participante</span>
+            </div>
+            <div class="selection-card__info" id="selection-info" style="display:none">
+              <div class="selection-avatar" id="selection-avatar">?</div>
+              <div class="selection-details">
+                <strong id="home-participant-name">Sin selección</strong>
+                <span id="home-participant-point" class="selection-meta"></span>
+                <span id="home-participant-phone" class="selection-meta"></span>
+              </div>
+            </div>
+            <div class="selection-actions">
+              <button type="button" id="btn-home-go-reserve" class="btn-primary" disabled>
+                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd"/></svg>
+                Reservar turno
+              </button>
+              <button type="button" id="btn-home-go-board" class="btn-outline" disabled>Ver tablero</button>
+              <button type="button" id="btn-home-go-people" class="btn-outline" disabled>Ver participantes</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pendientes del capitán -->
+        <div id="captain-pending-approval" class="card card--warn" style="display:none">
+          <div class="card-header">
+            <svg viewBox="0 0 20 20" fill="currentColor" class="card-icon card-icon--warn" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+            <h3 class="card-title">Publicadores pendientes de aprobación</h3>
+          </div>
+          <ul id="captain-pending-users-list" class="item-list"></ul>
         </div>
       </div>
     </div><!-- /view-home -->
- 
-    <!-- ════════ VISTA: TABLERO ════════ -->
+
+    <!-- ════ VISTA: TABLERO ════ -->
     <div id="view-board" style="display:none">
-      <div class="point-selector">
-        <label for="select-point">Punto:</label>
-        <select id="select-point" style="flex:1;max-width:260px"><option value="">Selecciona un punto…</option></select>
+      <div class="view-toolbar">
+        <label for="select-point" class="toolbar-label">Punto de predicación</label>
+        <div class="select-wrapper">
+          <select id="select-point"><option value="">Selecciona un punto…</option></select>
+          <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        </div>
       </div>
-      <div class="board-wrapper">
-        <table class="board-table" aria-label="Tablero de turnos">
-          <thead>
-            <tr>
-              <th>Horario</th>
-              <th>Lun</th><th>Mar</th><th>Mié</th>
-              <th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th>
-            </tr>
-          </thead>
-          <tbody id="board-tbody"></tbody>
-        </table>
+
+      <div class="board-card">
+        <div class="board-scroll">
+          <table class="board-table" aria-label="Tablero de turnos">
+            <thead>
+              <tr>
+                <th class="board-th board-th--time">Horario</th>
+                <th class="board-th">Lun</th>
+                <th class="board-th">Mar</th>
+                <th class="board-th">Mié</th>
+                <th class="board-th">Jue</th>
+                <th class="board-th">Vie</th>
+                <th class="board-th">Sáb</th>
+                <th class="board-th">Dom</th>
+              </tr>
+            </thead>
+            <tbody id="board-tbody"></tbody>
+          </table>
+        </div>
       </div>
       <div id="board-mobile"></div>
     </div><!-- /view-board -->
- 
-    <!-- ════════ VISTA: RESERVAR ════════ -->
+
+    <!-- ════ VISTA: RESERVAR ════ -->
     <div id="view-reserve" style="display:none">
       <div class="card">
-        <h2>Reservar turno</h2>
-        <div class="form-group">
-          <label for="select-day">Día</label>
-          <select id="select-day"></select>
+        <div class="card-header">
+          <svg viewBox="0 0 20 20" fill="currentColor" class="card-icon" aria-hidden="true"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd"/></svg>
+          <h2 class="card-title">Reservar turno</h2>
         </div>
-        <div class="form-group">
-          <label for="select-time">Horario</label>
-          <select id="select-time"></select>
+
+                <div class="form-section">
+          <p class="form-section-label">¿Cuándo?</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="select-day">Día</label>
+              <div class="select-wrapper">
+                <select id="select-day"></select>
+                <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="select-time">Horario</label>
+              <div class="select-wrapper">
+                <select id="select-time"></select>
+                <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div id="selected-slot-summary" class="slot-summary">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+            Selecciona un día y un horario para ver disponibilidad.
+          </div>
         </div>
-        <div id="selected-slot-summary" style="font-size:.85rem;color:#4b5563;margin-bottom:12px;padding:8px;background:#f1f5f9;border-radius:6px">
-          Selecciona un día y un horario.
+
+        <div class="form-section">
+          <p class="form-section-label">¿Quiénes participan?</p>
+          <div class="form-group">
+            <label for="sel-participant">Participante principal <span class="required">*</span></label>
+            <div class="select-wrapper">
+              <select id="sel-participant"></select>
+              <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="sel-companion1">Compañero 1</label>
+              <div class="select-wrapper">
+                <select id="sel-companion1"></select>
+                <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="sel-companion2">Compañero 2 <span class="optional">(opcional)</span></label>
+              <div class="select-wrapper">
+                <select id="sel-companion2"></select>
+                <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="sel-participant">Participante principal</label>
-          <select id="sel-participant"></select>
-        </div>
-        <div class="form-group">
-          <label for="sel-companion1">Compañero 1</label>
-          <select id="sel-companion1"></select>
-        </div>
-        <div class="form-group">
-          <label for="sel-companion2">Compañero 2 (opcional)</label>
-          <select id="sel-companion2"></select>
-        </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button type="button" id="btn-save-reserve-form"     class="btn-primary">Guardar reserva</button>
-          <button type="button" id="btn-cancel-my-reservation"  class="btn-danger"  disabled>Cancelar mi reserva</button>
+
+        <div class="form-actions">
+          <button type="button" id="btn-save-reserve-form" class="btn-primary btn--lg">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Guardar reserva
+          </button>
+          <button type="button" id="btn-cancel-my-reservation" class="btn-danger" disabled>
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            Cancelar mi reserva
+          </button>
         </div>
       </div>
     </div><!-- /view-reserve -->
- 
-    <!-- ════════ VISTA: PARTICIPANTES ════════ -->
+    
+    <!-- ════ VISTA: PARTICIPANTES ════ -->
     <div id="view-people" style="display:none">
       <div class="card">
-        <h2>Participantes</h2>
-        <p id="participants-permission-hint" class="view-muted mb-12" style="font-size:.85rem"></p>
-        <button type="button" id="btn-open-add-part" class="btn-primary mb-12">+ Agregar participante</button>
-        <ul id="participants-list" class="admin-list"></ul>
+        <div class="card-header card-header--between">
+          <div class="card-header-left">
+            <svg viewBox="0 0 20 20" fill="currentColor" class="card-icon" aria-hidden="true"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+            <h2 class="card-title">Participantes</h2>
+          </div>
+          <button type="button" id="btn-open-add-part" class="btn-primary btn--sm">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+            Agregar
+          </button>
+        </div>
+        <p id="participants-permission-hint" class="hint-text"></p>
+        <ul id="participants-list" class="item-list"></ul>
       </div>
     </div><!-- /view-people -->
- 
-    <!-- ════════ VISTA: MIS TURNOS ════════ -->
+
+    <!-- ════ VISTA: MIS TURNOS ════ -->
     <div id="view-my-reservations" style="display:none">
       <div class="card">
-        <h2>Mis reservas activas</h2>
-        <ul id="my-reservations-list" class="admin-list">
-          <li class="list-empty">Inicia sesión para ver tus reservas.</li>
+        <div class="card-header">
+          <svg viewBox="0 0 20 20" fill="currentColor" class="card-icon" aria-hidden="true"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+          <h2 class="card-title">Mis reservas activas</h2>
+        </div>
+        <ul id="my-reservations-list" class="item-list">
+          <li class="item-empty">Inicia sesión para ver tus reservas.</li>
         </ul>
       </div>
     </div><!-- /view-my-reservations -->
- 
-    <!-- ════════ VISTA: PERFIL ════════ -->
+
+    <!-- ════ VISTA: PERFIL ════ -->
     <div id="view-profile" style="display:none">
-      <div class="card text-center">
-        <div class="profile-avatar" id="profile-avatar-initials">?</div>
-        <strong id="profile-display-name" style="font-size:1.1rem">Sin sesión</strong>
-        <p id="profile-email" class="view-muted" style="font-size:.85rem;margin:4px 0 10px">Inicia sesión para ver tu perfil.</p>
-        <span id="profile-status-pill" class="profile-status-pill">Participante</span>
+      <div class="card profile-hero-card">
+        <div class="profile-avatar-wrap">
+          <div class="profile-avatar" id="profile-avatar-initials">?</div>
+        </div>
+        <strong id="profile-display-name" class="profile-name">Sin sesión</strong>
+        <p id="profile-email" class="profile-email">Inicia sesión para ver tu perfil.</p>
+        <span id="profile-status-pill" class="role-pill role-pill--lg">Participante</span>
       </div>
+
       <div class="card">
-        <p class="profile-detail"><strong>Rol:</strong> <span id="profile-role-detail">—</span></p>
-        <p class="profile-detail"><strong>Punto asignado:</strong> <span id="profile-assigned-point">—</span></p>
-        <p class="profile-detail"><strong>Capitán:</strong> <span id="profile-subadmin">—</span></p>
+        <div class="detail-row">
+          <span class="detail-label">Rol</span>
+          <span id="profile-role-detail" class="detail-value">—</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Punto asignado</span>
+          <span id="profile-assigned-point" class="detail-value">—</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Capitán</span>
+          <span id="profile-subadmin" class="detail-value">—</span>
+        </div>
       </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
-        <button type="button" id="btn-profile-logout"   class="btn-danger">Cerrar sesión</button>
-        <button type="button" id="btn-profile-go-enroll" class="btn-secondary">Formulario de inscripción</button>
+
+      <div class="form-actions">
+        <button type="button" id="btn-profile-logout" class="btn-danger">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
+          Cerrar sesión
+        </button>
+        <button type="button" id="btn-profile-go-enroll" class="btn-outline">
+          Formulario de inscripción
+        </button>
       </div>
     </div><!-- /view-profile -->
- 
-    <!-- ════════ VISTA: ADMIN ════════ -->
+
+    <!-- ════ VISTA: ADMIN ════ -->
     <div id="view-admin" style="display:none">
- 
-      <!-- Puntos -->
+
       <div class="card">
-        <h2>⚙️ Panel de administración</h2>
-        <h3>Puntos de predicación</h3>
-        <ul id="list-points" class="admin-list mb-12"></ul>
-        <button type="button" id="btn-add-point" class="btn-primary">+ Crear punto</button>
+        <div class="card-header">
+          <svg viewBox="0 0 20 20" fill="currentColor" class="card-icon" aria-hidden="true"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+          <h2 class="card-title">Puntos de predicación</h2>
+        </div>
+        <ul id="list-points" class="item-list"></ul>
+        <div style="margin-top: 12px">
+          <button type="button" id="btn-add-point" class="btn-primary btn--sm">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+            Crear punto
+          </button>
+        </div>
       </div>
- 
-      <!-- Cuentas pendientes de acceso -->
+
+      <div class="card card--warn">
+        <div class="card-header">
+          <svg viewBox="0 0 20 20" fill="currentColor" class="card-icon card-icon--warn" aria-hidden="true"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+          <h3 class="card-title">Cuentas pendientes de activación</h3>
+        </div>
+        <ul id="list-pending-approval" class="item-list"></ul>
+      </div>
+
       <div class="card">
-        <h3>🔐 Cuentas pendientes de activación</h3>
-        <ul id="list-pending-approval" class="admin-list"></ul>
+        <div class="card-header">
+          <svg viewBox="0 0 20 20" fill="currentColor" class="card-icon" aria-hidden="true"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+          <h3 class="card-title">Asignar capitán de punto</h3>
+        </div>
+        <div class="form-grid">
+          <div class="form-group" style="display:none">
+            <label for="subadmin-uid">UID del usuario</label>
+            <input type="text" id="subadmin-uid" placeholder="Opcional (avanzado)">
+          </div>
+          <div class="form-group">
+            <label for="subadmin-email">Correo del capitán <span class="required">*</span></label>
+            <input type="email" id="subadmin-email" placeholder="correo@ejemplo.com" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="subadmin-name">Nombre del capitán <span class="required">*</span></label>
+            <input type="text" id="subadmin-name" placeholder="Nombre completo" autocomplete="name">
+          </div>
+          <div class="form-group form-group--full">
+            <label for="subadmin-point">Punto asignado <span class="required">*</span></label>
+            <div class="select-wrapper">
+              <select id="subadmin-point"><option value="">Selecciona un punto…</option></select>
+              <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            </div>
+          </div>
+        </div>
+        <button type="button" id="btn-create-subadmin" class="btn-primary">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/></svg>
+          Asignar o invitar capitán
+        </button>
       </div>
- 
-      <!-- Asignar capitán -->
+
       <div class="card">
-        <h3>👮 Asignar capitán de punto</h3>
-        <div class="form-group" style="display:none">
-          <label for="subadmin-uid">UID del usuario (Firebase Auth)</label>
-          <input type="text" id="subadmin-uid" placeholder="Opcional (avanzado)">
+        <div class="card-header">
+          <svg viewBox="0 0 20 20" fill="currentColor" class="card-icon" aria-hidden="true"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd"/></svg>
+          <h3 class="card-title">Exportar reportes</h3>
         </div>
-        <div class="form-group">
-          <label for="subadmin-email">Correo del capitán</label>
-          <input type="email" id="subadmin-email" placeholder="correo@ejemplo.com">
-        </div>
-        <div class="form-group">
-          <label for="subadmin-name">Nombre del capitán</label>
-          <input type="text" id="subadmin-name" placeholder="Nombre completo">
-        </div>
-        <div class="form-group">
-          <label for="subadmin-point">Punto asignado</label>
-          <select id="subadmin-point"><option value="">Selecciona un punto…</option></select>
-        </div>
-        <button type="button" id="btn-create-subadmin" class="btn-primary">Asignar o invitar capitán</button>
+        <p class="hint-text">Exporta todos los reportes del punto seleccionado como PDF.</p>
+        <button type="button" id="btn-export-all-pdf" class="btn-outline">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          Exportar todos los reportes (PDF)
+        </button>
       </div>
- 
-      <!-- Exportar PDF -->
-      <div class="card">
-        <h3>📄 Exportar reportes</h3>
-        <p class="view-muted mb-12" style="font-size:.85rem">Exporta todos los reportes del punto seleccionado como PDF.</p>
-        <button type="button" id="btn-export-all-pdf" class="btn-secondary">Exportar todos los reportes (PDF)</button>
-      </div>
- 
     </div><!-- /view-admin -->
- 
-  </main><!-- /app-main -->
-</div><!-- /app -->
- 
-<!-- ══════════════════════════════════════════════════════════════════════════
-     MODALES
-══════════════════════════════════════════════════════════════════════════ -->
- 
+
+  </main>
+</div>
+
+<!-- ══════════ MODALES ══════════ -->
+
 <!-- Modal: autenticación -->
 <div id="modal-auth" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-auth-title" aria-hidden="true">
+  <div class="modal-backdrop" data-close-modal="modal-auth"></div>
   <div class="modal-box">
-    <button type="button" class="modal-close" data-close-modal="modal-auth" aria-label="Cerrar">✕</button>
-    <h2 id="modal-auth-title">Iniciar sesión</h2>
+    <button type="button" class="modal-close" data-close-modal="modal-auth" aria-label="Cerrar">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+    </button>
+    <div class="modal-icon">
+      <svg viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="20" fill="#ebf1fb"/>
+        <path d="M20 10a4 4 0 100 8 4 4 0 000-8zm-7 19a7 7 0 0114 0" stroke="#1a4a8a" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h2 id="modal-auth-title" class="modal-title">Iniciar sesión</h2>
     <div class="form-group">
       <label for="auth-email">Correo electrónico</label>
       <input type="email" id="auth-email" placeholder="correo@ejemplo.com" autocomplete="email">
     </div>
     <div class="form-group">
       <label for="auth-password">Contraseña</label>
-      <input type="password" id="auth-password" placeholder="Contraseña" autocomplete="current-password">
+      <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password">
     </div>
     <div class="modal-actions">
-      <button type="button" id="btn-login" class="btn-primary w-full">Entrar</button>
+      <button type="button" id="btn-login" class="btn-primary btn--full btn--lg">Entrar</button>
     </div>
-    <div style="text-align:center;margin-top:12px">
-      <span style="font-size:.82rem;color:#6b7280">— o —</span>
+    <div class="modal-divider"><span>o</span></div>
+    <button type="button" id="btn-google-signin" class="btn-google btn--full">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="">
+      Continuar con Google
+    </button>
+  </div>
+</div>
+
+<!-- Modal: agregar participante -->
+<div id="modal-participant" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-part-title" aria-hidden="true">
+  <div class="modal-backdrop" data-close-modal="modal-participant"></div>
+  <div class="modal-box">
+    <button type="button" class="modal-close" data-close-modal="modal-participant" aria-label="Cerrar">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+    </button>
+    <h2 id="modal-part-title" class="modal-title">Agregar participante</h2>
+    <div class="form-group">
+      <label for="inp-part-name">Nombre completo <span class="required">*</span></label>
+      <input type="text" id="inp-part-name" placeholder="Nombre del participante" maxlength="80" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label for="inp-part-phone">Teléfono <span class="optional">(opcional)</span></label>
+      <input type="tel" id="inp-part-phone" placeholder="Ej: 300 123 4567" maxlength="30" autocomplete="off">
     </div>
     <div class="modal-actions">
-      <button type="button" id="btn-google-signin" class="btn-secondary w-full" style="display:flex;align-items:center;justify-content:center;gap:8px">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google">
-        Continuar con Google
+      <button type="button" data-close-modal="modal-participant" class="btn-outline">Cancelar</button>
+      <button type="button" id="btn-save-part" class="btn-primary">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        Guardar
       </button>
     </div>
   </div>
 </div>
- 
-<!-- Modal: agregar participante -->
-<div id="modal-participant" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-part-title" aria-hidden="true">
-  <div class="modal-box">
-    <button type="button" class="modal-close" data-close-modal="modal-participant" aria-label="Cerrar">✕</button>
-    <h2 id="modal-part-title">Agregar participante</h2>
-    <div class="form-group">
-      <label for="inp-part-name">Nombre completo</label>
-      <input type="text" id="inp-part-name" placeholder="Nombre del participante" maxlength="80">
-    </div>
-    <div class="form-group">
-      <label for="inp-part-phone">Teléfono (opcional)</label>
-      <input type="text" id="inp-part-phone" placeholder="Ej: 555-1234" maxlength="30">
-    </div>
-    <div class="modal-actions">
-      <button type="button" data-close-modal="modal-participant" class="btn-secondary">Cancelar</button>
-      <button type="button" id="btn-save-part" class="btn-primary">Guardar</button>
-    </div>
-  </div>
-</div>
- 
+
 <!-- Modal: reporte de turno -->
 <div id="modal-report" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-report-title" aria-hidden="true">
-  <div class="modal-box">
-    <button type="button" class="modal-close" data-close-modal="modal-report" aria-label="Cerrar">✕</button>
-    <h2 id="modal-report-title">📋 Reporte de turno</h2>
-    <p id="report-slot-label" style="font-size:.82rem;color:#4b5563;margin-bottom:14px"></p>
- 
-    <div class="form-group">
-      <label for="report-date">Fecha del turno</label>
-      <input type="date" id="report-date">
+  <div class="modal-backdrop" data-close-modal="modal-report"></div>
+  <div class="modal-box modal-box--wide">
+    <button type="button" class="modal-close" data-close-modal="modal-report" aria-label="Cerrar">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+    </button>
+    <h2 id="modal-report-title" class="modal-title">Reporte de turno</h2>
+    <p id="report-slot-label" class="modal-subtitle"></p>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="report-date">Fecha del turno</label>
+        <input type="date" id="report-date">
+      </div>
+      <div class="form-group">
+        <label for="report-start-time">Hora de inicio real</label>
+        <input type="time" id="report-start-time">
+      </div>
     </div>
-    <div class="form-group">
-      <label for="report-start-time">Hora de inicio real</label>
-      <input type="time" id="report-start-time">
+
+    <div class="report-toggles">
+      <label class="toggle-row" for="report-fulfilled">
+        <span class="toggle-label">¿Se cumplió el turno?</span>
+        <div class="select-wrapper">
+          <select id="report-fulfilled">
+            <option value="true">✓ Sí</option>
+            <option value="false">✗ No</option>
+          </select>
+          <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        </div>
+      </label>
+      <label class="toggle-row" for="report-conversation">
+        <span class="toggle-label">¿Conversaciones iniciadas?</span>
+        <div class="select-wrapper">
+          <select id="report-conversation">
+            <option value="false">No</option>
+            <option value="true">Sí</option>
+          </select>
+          <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        </div>
+      </label>
+      <label class="toggle-row" for="report-bible-study">
+        <span class="toggle-label">¿Arreglos para estudio bíblico?</span>
+        <div class="select-wrapper">
+          <select id="report-bible-study">
+            <option value="false">No</option>
+            <option value="true">Sí</option>
+          </select>
+          <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        </div>
+      </label>
     </div>
-    <div class="form-group">
-      <label for="report-fulfilled">¿Se cumplió el turno?</label>
-      <select id="report-fulfilled">
-        <option value="true">Sí</option>
-        <option value="false">No</option>
-      </select>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="report-revisits">Revisitas</label>
+        <input type="number" id="report-revisits" min="0" value="0">
+      </div>
+      <div class="form-group">
+        <label for="report-studies">Estudios bíblicos activos</label>
+        <input type="number" id="report-studies" min="0" value="0">
+      </div>
     </div>
+
     <div class="form-group">
-      <label for="report-conversation">¿Conversaciones iniciadas?</label>
-      <select id="report-conversation">
-        <option value="false">No</option>
-        <option value="true">Sí</option>
-      </select>
+      <label for="report-notes">Notas <span class="optional">(máx. 500 caracteres)</span></label>
+      <textarea id="report-notes" maxlength="500" placeholder="Observaciones del turno…" rows="3"></textarea>
     </div>
-    <div class="form-group">
-      <label for="report-bible-study">¿Arreglos para estudio bíblico?</label>
-      <select id="report-bible-study">
-        <option value="false">No</option>
-        <option value="true">Sí</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="report-revisits">Revisitas</label>
-      <input type="number" id="report-revisits" min="0" value="0">
-    </div>
-    <div class="form-group">
-      <label for="report-studies">Estudios bíblicos activos</label>
-            <input type="number" id="report-studies" min="0" value="0">
-    </div>
-    <div class="form-group">
-      <label for="report-notes">Notas (máx. 500 caracteres)</label>
-      <textarea id="report-notes" maxlength="500" placeholder="Observaciones…"></textarea>
-    </div>
- 
+
     <div class="modal-actions">
-      <button type="button" id="btn-remove-report"   class="btn-danger">Eliminar</button>
-      <button type="button" id="btn-download-report" class="btn-secondary">Descargar PDF</button>
-      <button type="button" id="btn-save-report"     class="btn-primary">Guardar</button>
+      <button type="button" id="btn-remove-report" class="btn-danger btn--sm">Eliminar</button>
+      <button type="button" id="btn-download-report" class="btn-outline btn--sm">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        PDF
+      </button>
+      <button type="button" id="btn-save-report" class="btn-primary">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        Guardar reporte
+      </button>
     </div>
   </div>
 </div>
- 
+
 <!-- Modal: reasignación de punto -->
 <div id="modal-reassign" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-reassign-title" aria-hidden="true">
+  <div class="modal-backdrop" data-close-modal="modal-reassign"></div>
   <div class="modal-box">
-    <button type="button" class="modal-close" data-close-modal="modal-reassign" aria-label="Cerrar">✕</button>
-    <h2 id="modal-reassign-title">⚠️ Cambiar de punto</h2>
-    <p style="font-size:.9rem;margin-bottom:12px">
+    <button type="button" class="modal-close" data-close-modal="modal-reassign" aria-label="Cerrar">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+    </button>
+    <div class="modal-icon modal-icon--warn">
+      <svg viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="20" fill="#fff7ed"/>
+        <path d="M20 14v6M20 26h.01" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h2 id="modal-reassign-title" class="modal-title">Cambiar de punto</h2>
+    <p class="modal-body-text">
       Tienes <strong id="reassign-affected-count">0</strong> reserva(s) activa(s) en
       <strong id="reassign-from-point"></strong>.
-    </p>
-    <p style="font-size:.9rem;margin-bottom:16px">
-      Si confirmas, se cancelarán y quedarás asignado a
-      <strong id="reassign-to-point"></strong>.
+      Si confirmas, se cancelarán y quedarás asignado a <strong id="reassign-to-point"></strong>.
     </p>
     <div class="modal-actions">
-      <button type="button" id="btn-reassign-cancel"  class="btn-secondary">Cancelar</button>
+      <button type="button" id="btn-reassign-cancel" class="btn-outline">Cancelar</button>
       <button type="button" id="btn-reassign-confirm" class="btn-primary">Confirmar cambio</button>
     </div>
   </div>
 </div>
- 
-<!-- ─── Scripts ─────────────────────────────────────────────────────────────── -->
+
 <script type="module" src="app.js"></script>
- 
 </body>
-</html>
+      </html>
+  
