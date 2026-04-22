@@ -53,42 +53,40 @@ body.modal-open { overflow: hidden; }
   flex-direction: column;
 }
 
+/* ── Header compacto ─────────────────────────────────────────────────────── */
 .app-header {
   position: sticky;
   top: 0;
   z-index: 80;
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
-  padding: var(--space-3) var(--space-4);
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: var(--space-2) var(--space-3);
-  align-items: center;
-}
-
-.app-header h1 {
-  margin: 0;
-  font-family: var(--font-heading);
-  font-size: 1.1rem;
-  color: var(--primary);
-  letter-spacing: 0.01em;
-}
-
-.header-stats {
-  grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--primary) 0%, #2655b8 100%);
+  box-shadow: 0 2px 12px rgba(31,59,99,.35);
+  padding: 10px var(--space-4) 8px;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--space-2);
 }
 
-.stat-badge {
-  padding: 2px 8px;
-  font-size: 0.75rem;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: var(--surface-muted);
-  color: var(--text-muted);
+.app-logo {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.01em;
+}
+
+.header-session {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 #role-badge {
@@ -96,22 +94,50 @@ body.modal-open { overflow: hidden; }
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  border: 1px solid var(--line);
-  background: #eef2ff;
-  color: #1e3a8a;
-  font-size: 0.74rem;
+  background: rgba(255,255,255,.18);
+  color: #fff;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 2px 10px;
-}
-
-#session-email {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding: 3px 10px;
   white-space: nowrap;
 }
+
+.btn-header-action {
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: .78rem;
+  font-weight: 700;
+  font-family: var(--font);
+  padding: 5px 12px;
+  min-height: 32px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-header-action:hover { background: rgba(255,255,255,.28); }
+
+.header-stats {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.header-stats::-webkit-scrollbar { display: none; }
+
+.stat-badge {
+  padding: 3px 9px;
+  font-size: 0.72rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.9);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#session-email { display: none; }
 
 #access-gate-banner {
   background: #fff7ed;
@@ -123,7 +149,7 @@ body.modal-open { overflow: hidden; }
 
 .nav-bar {
   position: sticky;
-  top: 66px;
+  top: 72px;
   z-index: 70;
   display: flex;
   gap: 2px;
@@ -141,18 +167,23 @@ body.modal-open { overflow: hidden; }
   background: transparent;
   color: var(--text-muted);
   font: inherit;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
   line-height: 1.2;
   white-space: nowrap;
   min-height: 46px;
   padding: 0 var(--space-3);
   border-bottom: 2px solid transparent;
-  transition: background-color .15s ease, color .15s ease, border-color .15s ease, transform .08s ease;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
+.nav-icon { font-size: 1rem; line-height: 1; }
+.nav-label { font-size: 0.8rem; }
+
 .nav-tab:hover { color: var(--primary); background: #eff6ff; }
-.nav-tab:active { transform: translateY(1px); }
 .nav-tab.active {
   color: var(--primary);
   border-bottom-color: var(--primary);
@@ -422,10 +453,10 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 }
 
 .selection-card {
-  border: 1px solid var(--line);
+  border: 1.5px solid #c7d4f7;
   border-radius: var(--radius-sm);
-  padding: var(--space-4);
-  background: #fff;
+  padding: var(--space-3);
+  background: #eef4ff;
   margin-top: var(--space-3);
 }
 
@@ -433,6 +464,72 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+}
+
+/* ── Directorio de participantes (filas visuales) ────────────────────────── */
+#home-participant-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.dir-participant-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  cursor: pointer;
+  transition: background .12s;
+  border-bottom: 1px solid var(--line);
+}
+.dir-participant-row:last-child { border-bottom: none; }
+.dir-participant-row:hover { background: #f0f4ff; }
+.dir-participant-row.selected { background: #eef4ff; }
+
+.dir-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary) 0%, #2655b8 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .78rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.dir-info { flex: 1; min-width: 0; }
+.dir-name { font-weight: 700; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dir-meta { font-size: .75rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.dir-point-tag {
+  background: var(--surface-muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: .65rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Pick-point card ─────────────────────────────────────────────────────── */
+.pick-point-card {
+  background: linear-gradient(135deg, #eef4ff 0%, #e8f0fe 100%);
+  border-color: #c7d4f7;
+}
+
+.pick-point-card h3 {
+  color: var(--primary);
+  margin-bottom: 6px;
 }
 
 .profile-avatar {
@@ -533,11 +630,10 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   }
 
   .app-header {
-    padding: var(--space-3);
-    grid-template-columns: 1fr;
+    padding: 10px var(--space-3) 8px;
   }
 
-  .header-stats,
+  .header-stats { display: flex; }
   #session-email { display: none; }
 
   .app-main { padding: var(--space-3); }
@@ -554,21 +650,40 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
     padding: 0;
     border-top: 1px solid var(--line);
     border-bottom: 0;
-    background: rgba(255, 255, 255, 0.97);
-    backdrop-filter: blur(8px);
+    background: rgba(255,255,255,.97);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: minmax(84px, 1fr);
+    grid-auto-columns: 1fr;
     padding-bottom: env(safe-area-inset-bottom, 0px);
+    gap: 0;
   }
 
   .nav-tab {
-    min-height: 58px;
-    font-size: 0.76rem;
+    min-height: 60px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
     border-bottom: 0;
-    border-top: 2px solid transparent;
-    padding: 6px 8px;
-    text-align: center;
+    border-top: 2.5px solid transparent;
+    padding: 8px 4px 6px;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: .01em;
+  }
+
+  .nav-icon {
+    font-size: 1.35rem;
+    line-height: 1;
+    display: block;
+  }
+
+  .nav-label {
+    font-size: 0.62rem;
+    display: block;
+    line-height: 1.2;
   }
 
   .nav-tab.active {
@@ -605,3 +720,123 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 @media (min-width: 1280px) {
   .app-main { max-width: 1240px; }
 }
+
+/* ── Tablero móvil (MEJORA 1) ─────────────────────────────────────────────── */
+#board-mobile { display: none; }
+
+.board-mobile-day { margin-bottom: 10px; }
+
+.board-mobile-day summary {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+
+.board-mobile-day[open] summary {
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border-bottom-color: transparent;
+}
+
+.board-mobile-day summary::-webkit-details-marker { display: none; }
+.board-mobile-day-summary-text { font-size: .8rem; color: var(--text-muted); font-weight: 400; }
+
+.board-mobile-slot {
+  border: 1px solid var(--line);
+  border-top: none;
+  padding: 10px 14px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.board-mobile-slot:last-child {
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.board-mobile-slot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.board-mobile-slot-time { font-weight: 700; font-size: .9rem; }
+
+.board-mobile-slot-names { font-size: .85rem; color: var(--text-muted); }
+
+.board-mobile-slot-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.badge-own-slot {
+  display: inline-flex;
+  align-items: center;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 1px 7px;
+}
+
+.board-status-badge {
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.board-status-badge.free     { background: #f3f4f6; color: #6b7280; }
+.board-status-badge.partial  { background: #fef9c3; color: #92400e; }
+.board-status-badge.ready    { background: #dbeafe; color: #1e40af; }
+.board-status-badge.complete { background: #dcfce7; color: #166534; }
+
+@media (max-width: 639px) {
+  .board-wrapper { display: none; }
+  #board-mobile  { display: block; }
+}
+
+/* ── Resaltar turno propio en tabla (MEJORA 2) ────────────────────────────── */
+.board-cell--own {
+  outline: 2px solid #2563eb;
+  outline-offset: -2px;
+}
+
+/* ── Estado de aprobación en Mis turnos (MEJORA 3) ────────────────────────── */
+.reservation-status-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: .75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-top: 2px;
+  width: fit-content;
+}
+.reservation-status-badge.approved { background: #dcfce7; color: #166534; }
+.reservation-status-badge.pending  { background: #fef9c3; color: #92400e; }
+
+/* ── Badge de pendientes en nav (MEJORA 6) ────────────────────────────────── */
+.nav-pending-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #dc2626;
+  color: #fff;
+  font-size: .65rem;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  padding: 0 4px;
+  margin-left: 4px;
+  vertical-align: middle;
+  line-height: 1;
+                 }
+  
