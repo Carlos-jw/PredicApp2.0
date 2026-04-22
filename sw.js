@@ -1,11 +1,11 @@
 /**
  * sw.js — Service Worker de PredicApp.
  * Estrategia: Cache First para assets estáticos, Network First para HTML.
- * Versión: v16 — debe coincidir con data-build en index.html.
+ * Versión: v17 — debe coincidir con data-build en index.html.
  */
 
-const CACHE_NAME   = 'predicapp-v16';
-const CACHE_STATIC = 'predicapp-static-v16';
+const CACHE_NAME   = 'predicapp-v17';
+const CACHE_STATIC = 'predicapp-static-v17';
 
 const STATIC_ASSETS = [
   '/',
