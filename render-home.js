@@ -38,6 +38,7 @@ export function renderHomeDirectory() {
     state.selectedDirectoryParticipantId = filtered[0]?.id ?? '';
   }
 
+  // ── Select oculto (mantiene compatibilidad con el resto del código) ────────
   renderSelectOptions(
     list,
     filtered.map((p) => ({
@@ -45,9 +46,56 @@ export function renderHomeDirectory() {
       label: `${p.name} · ${p.pointName}${p.phone ? ` · ${p.phone}` : ''}`
     }))
   );
-
   list.value    = state.selectedDirectoryParticipantId || '';
   list.disabled = !filtered.length;
+
+  // ── Filas visuales ────────────────────────────────────────────────────────
+  const wrap = document.getElementById('home-participant-list-wrap');
+  if (wrap) {
+    wrap.innerHTML = '';
+
+    if (!filtered.length) {
+      const empty = document.createElement('p');
+      empty.className = 'list-empty';
+      empty.textContent = 'Sin resultados.';
+      wrap.appendChild(empty);
+    } else {
+      filtered.forEach((p) => {
+        const initials = p.name
+          .split(' ')
+          .slice(0, 2)
+          .map((w) => w[0] ?? '')
+          .join('')
+          .toUpperCase();
+
+        const row = document.createElement('div');
+        row.className = 'dir-participant-row' +
+          (p.id === state.selectedDirectoryParticipantId ? ' selected' : '');
+        row.dataset.id = p.id;
+
+        row.innerHTML = `
+          <div class="dir-avatar">${initials}</div>
+          <div class="dir-info">
+            <div class="dir-name">${p.name}</div>
+            <div class="dir-meta">${p.phone ? p.phone + ' · ' : ''}${p.pointName}</div>
+          </div>
+          <div class="dir-point-tag">${p.pointName.split(' ').slice(0,2).join(' ')}</div>
+        `;
+
+        row.addEventListener('click', () => {
+          state.selectedDirectoryParticipantId = p.id;
+          list.value = p.id;
+          // Actualizar highlight
+          wrap.querySelectorAll('.dir-participant-row').forEach((r) =>
+            r.classList.toggle('selected', r.dataset.id === p.id)
+          );
+          renderHomeSelectionCard();
+        });
+
+        wrap.appendChild(row);
+      });
+    }
+  }
 
   const countEl = document.getElementById('home-participant-count');
   if (countEl) {
