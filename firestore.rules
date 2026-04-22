@@ -1,0 +1,153 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userDocExists() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function userData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return userDocExists() && userData().role == 'admin';
+    }
+
+    function isSubadmin() {
+      return userDocExists() && userData().role == 'subadmin';
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function authEmail() {
+      return (signedIn() && request.auth.token.email != null)
+        ? request.auth.token.email
+        : '';
+    }
+
+    function hasCaptainInviteForAuthEmail() {
+      return authEmail() != ''
+        && exists(/databases/$(database)/documents/captainInvites/$(authEmail()));
+    }
+
+    function canClaimCaptainRole(uid) {
+      return isOwner(uid)
+        && hasCaptainInviteForAuthEmail()
+        && request.resource.data.email == authEmail()
+        && request.resource.data.role == 'subadmin'
+        && request.resource.data.status == 'aprobado'
+        && request.resource.data.adminApproved == true
+        && request.resource.data.assignedPointIds is list
+        && request.resource.data.assignedPointIds.size() > 0;
+    }
+
+    function isApprovedUser() {
+      return userDocExists()
+        && (
+          userData().role in ['admin', 'subadmin']
+          || (
+            userData().role == 'usuario'
+            && userData().status == 'aprobado'
+            && userData().adminApproved == true
+          )
+        );
+    }
+
+    function isPointCaptain(pointId) {
+      return signedIn()
+        && get(/databases/$(database)/documents/points/$(pointId)).data.subadminId == request.auth.uid;
+    }
+
+    function canAccessPoint(pointId) {
+      return isAdmin()
+        || isPointCaptain(pointId)
+        || (
+          isApprovedUser()
+          && userData().assignedPointIds is list
+          && userData().assignedPointIds.hasAny([pointId])
+        );
+    }
+
+    // users/{uid}
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.role == 'usuario'
+        && request.resource.data.status == 'pendiente'
+        && request.resource.data.adminApproved == false;
+
+      allow read: if isOwner(uid) || isAdmin() || isSubadmin();
+
+      allow update: if isAdmin() || (
+        isOwner(uid)
+        // Evita que el propio usuario se auto-promueva o se autoapruebe.
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.status == resource.data.status
+        && request.resource.data.adminApproved == resource.data.adminApproved
+      ) || canClaimCaptainRole(uid);
+
+      allow delete: if isAdmin();
+    }
+
+    // points/{pointId}
+    match /points/{pointId} {
+      // Invitados necesitan leer puntos para inscripción pública.
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || isPointCaptain(pointId)
+        || (
+          isSubadmin()
+          && userData().assignedPointIds is list
+          && userData().assignedPointIds.hasAny([pointId])
+        );
+    }
+
+    // points/{pointId}/data/*
+    match /points/{pointId}/data/{docId} {
+      // Inscripción pública y lectura de participantes para directorio/inicio.
+      allow read: if docId == 'participants' && true;
+      allow write: if docId == 'participants' && (
+        isAdmin()
+        || isPointCaptain(pointId)
+        || !signedIn()
+      );
+
+      // Turnos y reportes para usuarios aprobados, capitanes o admin.
+      allow read: if docId in ['slots', 'reports'] && canAccessPoint(pointId);
+      allow write: if docId in ['slots', 'reports'] && (
+        isAdmin()
+        || isPointCaptain(pointId)
+        || canAccessPoint(pointId)
+      );
+    }
+
+    // Invitaciones de capitán por correo
+    match /captainInvites/{emailKey} {
+      // Solo admin crea/actualiza invitaciones
+      allow create, update: if isAdmin();
+
+      // Lectura para admin o para el propio correo autenticado
+      allow read: if isAdmin()
+        || (
+          signedIn()
+          && authEmail() == emailKey
+        );
+
+      // El propio correo puede eliminar su invitación al reclamarla.
+      allow delete: if isAdmin()
+        || (signedIn() && authEmail() == emailKey);
+    }
+
+    // Denegar todo lo no contemplado explícitamente.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,24 @@
+# Variables de entorno — NUNCA subir al repositorio
+.env
+.env.local
+.env.production
+
+# Archivos de diagnóstico — no son parte del deploy
+diag.js
+diag.html
+
+# Firebase project config con project ID real
+_firebaserc.txt
+.firebaserc
+firebase.json
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+
+# Dependencias (si se agrega un bundler en el futuro)
+node_modules/

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1f2937">
+  <meta name="description" content="PredicApp: gestión clara y ordenada de turnos y participantes.">
+  <title>PredicApp</title>
+ 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Merriweather:wght@700&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="/assets/manifest.json">
+  <link rel="icon" href="assets/192x192.png" type="image/png">
+ 
+  <script>
+    window.__FIREBASE_CONFIG__ = {
+      apiKey: "AIzaSyAgnJhMaPPYv9B0OawPH1GGosbJVrmKV5I",
+      authDomain: "predicapp-3470d.firebaseapp.com",
+      projectId: "predicapp-3470d",
+      storageBucket: "predicapp-3470d.firebasestorage.app",
+      messagingSenderId: "337928498725",
+      appId: "1:337928498725:web:82ef2843c3dc5ad274d9cc"
+    };
+  </script>
+ 
+  <!-- Cargar una sola vez el fallback -->
+  <script src="/fallback-nav.js" defer></script>
+</head>
+<body data-build="predicapp-v16">
+ 
+<div id="app">
+ 
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <header class="app-header">
+    <h1>PredicApp</h1>
+    <div class="header-stats">
+      <span class="stat-badge">👥 <span id="count-part">0</span> part.</span>
+      <span class="stat-badge">📍 <span id="count-point">0</span> puntos</span>
+      <span class="stat-badge">🟡 <span id="count-parti">0</span> parciales</span>
+      <span class="stat-badge">✅ <span id="count-comp">0</span> completos</span>
+    </div>
+    <span id="role-badge">Participante</span>
+    <span id="session-email">Sin sesión</span>
+    <button type="button" id="btn-open-auth" class="btn-secondary">Entrar</button>
+    <button type="button" id="btn-logout"    class="btn-secondary" style="display:none">Salir</button>
+  </header>
+ 
+  <!-- ── Banner acceso pendiente ─────────────────────────────────────────── -->
+  <div id="access-gate-banner" style="display:none"></div>
+ 
+  <!-- ── Navegación ──────────────────────────────────────────────────────── -->
+  <nav class="nav-bar" role="navigation" aria-label="Vistas principales">
+  <button
+    class="nav-tab active"
+    data-view="home"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('home')"
+  >🏠 Inicio</button>
+ 
+  <button
+    class="nav-tab"
+    data-view="board"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('board')"
+  >📋 Tablero</button>
+ 
+  <button
+    class="nav-tab"
+    data-view="reserve"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('reserve')"
+  >➕ Reservar</button>
+ 
+  <button
+    class="nav-tab"
+    data-view="people"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('people')"
+  >👤 Participantes</button>
+ 
+  <button
+    class="nav-tab"
+    data-view="my-reservations"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('my-reservations')"
+  >🗓 Mis turnos</button>
+ 
+  <button
+    class="nav-tab"
+    data-view="profile"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('profile')"
+  >👤 Perfil</button>
+ 
+  <button
+    class="nav-tab"
+    data-view="admin"
+    type="button"
+    onclick="window.__predicappFallbackActivateView && window.__predicappFallbackActivateView('admin')"
+  >⚙️ Admin</button>
+  </nav>
+ 
+  <!-- ── Contenido principal ─────────────────────────────────────────────── -->
+  <main class="app-main">
+ 
+    <!-- ════════ VISTA: INICIO ════════ -->
+    <div id="view-home">
+ 
+      <!-- Panel invitado: inscripción pública -->
+      <div id="guest-enroll-panel">
+        <h2>¡Participa en el servicio de campo!</h2>
+        <p style="font-size:.88rem;margin-bottom:14px;color:#374151">
+          Inscríbete para que el capitán de tu punto te asigne turnos de predicación.
+        </p>
+        <div class="form-group">
+          <label for="enroll-display-name">Nombre completo</label>
+          <input type="text" id="enroll-display-name" placeholder="Tu nombre…" maxlength="80">
+        </div>
+        <div class="form-group">
+          <label for="enroll-phone">Teléfono (opcional)</label>
+          <input type="text" id="enroll-phone" placeholder="Ej: 555-1234" maxlength="30">
+        </div>
+        <div class="form-group">
+          <label for="enroll-point">Punto de predicación</label>
+          <select id="enroll-point"><option value="">Cargando puntos…</option></select>
+        </div>
+        <div class="form-group">
+          <label for="enroll-day">Día preferido</label>
+          <select id="enroll-day"><option value="">Selecciona un día…</option></select>
+        </div>
+        <div class="form-group">
+          <label for="enroll-time">Horario preferido</label>
+          <select id="enroll-time"><option value="">Selecciona una hora…</option></select>
+        </div>
+        <button type="button" id="btn-enroll-submit" class="btn-primary w-full">Inscribirse</button>
+        <p style="font-size:.78rem;color:#6b7280;margin-top:8px;text-align:center">
+          ¿Ya tienes cuenta? <button type="button" id="btn-profile-go-login" style="background:none;border:none;color:#2563eb;cursor:pointer;font-size:.78rem">Inicia sesión</button>
+        </p>
+      </div>
+ 
+      <!-- Panel espera aprobación -->
+      <div id="home-pending-wait" style="display:none">
+        ⏳ Tu cuenta está pendiente de aprobación.
+        <span id="logged-pick-point-subtitle"></span>
+      </div>
+ 
+      <!-- Panel seleccionar primer punto (usuario recién registrado) -->
+      <div id="logged-pick-point-panel" style="display:none" class="card">
+        <h3>Selecciona tu punto de predicación</h3>
+        <div class="form-group">
+          <select id="complete-point-select"><option value="">Selecciona un punto…</option></select>
+        </div>
+        <button type="button" id="btn-complete-first-point" class="btn-primary">Guardar punto</button>
+      </div>
+ 
+      <!-- Contenido principal del directorio -->
+      <div id="home-main-content">
+        <div class="card">
+          <h3>Directorio de participantes</h3>
+          <div class="directory-search form-group">
+            <input type="text" id="home-participant-search" placeholder="Buscar por nombre, teléfono o punto…">
+          </div>
+          <select id="home-participant-list" size="6" style="width:100%;margin-bottom:8px"></select>
+          <span id="home-participant-count" class="view-muted"></span>
+ 
+          <div class="selection-card">
+            <strong id="home-participant-name">Sin selección</strong>
+            <div id="home-participant-point" class="view-muted" style="font-size:.85rem;margin-bottom:4px">Selecciona un participante para ver su punto.</div>
+            <div id="home-participant-phone" class="view-muted" style="font-size:.85rem;margin-bottom:10px"></div>
+            <div class="selection-actions">
+              <button type="button" id="btn-home-go-reserve" class="btn-primary"   disabled>Reservar turno</button>
+              <button type="button" id="btn-home-go-people"  class="btn-secondary" disabled>Ver participantes</button>
+              <button type="button" id="btn-home-go-board"   class="btn-secondary" disabled>Ver tablero</button>
+            </div>
+          </div>
+        </div>
+ 
+        <!-- Pendientes de aprobación del capitán -->
+        <div id="captain-pending-approval" style="display:none" class="card">
+          <h3>⏳ Publicadores pendientes de aprobación</h3>
+          <ul id="captain-pending-users-list" class="admin-list"></ul>
+        </div>
+      </div>
+    </div><!-- /view-home -->
+ 
+    <!-- ════════ VISTA: TABLERO ════════ -->
+    <div id="view-board" style="display:none">
+      <div class="point-selector">
+        <label for="select-point">Punto:</label>
+        <select id="select-point" style="flex:1;max-width:260px"><option value="">Selecciona un punto…</option></select>
+      </div>
+      <div class="board-wrapper">
+        <table class="board-table" aria-label="Tablero de turnos">
+          <thead>
+            <tr>
+              <th>Horario</th>
+              <th>Lun</th><th>Mar</th><th>Mié</th>
+              <th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th>
+            </tr>
+          </thead>
+          <tbody id="board-tbody"></tbody>
+        </table>
+      </div>
+    </div><!-- /view-board -->
+ 
+    <!-- ════════ VISTA: RESERVAR ════════ -->
+    <div id="view-reserve" style="display:none">
+      <div class="card">
+        <h2>Reservar turno</h2>
+        <div class="form-group">
+          <label for="select-day">Día</label>
+          <select id="select-day"></select>
+        </div>
+        <div class="form-group">
+          <label for="select-time">Horario</label>
+          <select id="select-time"></select>
+        </div>
+        <div id="selected-slot-summary" style="font-size:.85rem;color:#4b5563;margin-bottom:12px;padding:8px;background:#f1f5f9;border-radius:6px">
+          Selecciona un día y un horario.
+        </div>
+        <div class="form-group">
+          <label for="sel-participant">Participante principal</label>
+          <select id="sel-participant"></select>
+        </div>
+        <div class="form-group">
+          <label for="sel-companion1">Compañero 1</label>
+          <select id="sel-companion1"></select>
+        </div>
+        <div class="form-group">
+          <label for="sel-companion2">Compañero 2 (opcional)</label>
+          <select id="sel-companion2"></select>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" id="btn-save-reserve-form"     class="btn-primary">Guardar reserva</button>
+          <button type="button" id="btn-cancel-my-reservation"  class="btn-danger"  disabled>Cancelar mi reserva</button>
+        </div>
+      </div>
+    </div><!-- /view-reserve -->
+ 
+    <!-- ════════ VISTA: PARTICIPANTES ════════ -->
+    <div id="view-people" style="display:none">
+      <div class="card">
+        <h2>Participantes</h2>
+        <p id="participants-permission-hint" class="view-muted mb-12" style="font-size:.85rem"></p>
+        <button type="button" id="btn-open-add-part" class="btn-primary mb-12">+ Agregar participante</button>
+        <ul id="participants-list" class="admin-list"></ul>
+      </div>
+    </div><!-- /view-people -->
+ 
+    <!-- ════════ VISTA: MIS TURNOS ════════ -->
+    <div id="view-my-reservations" style="display:none">
+      <div class="card">
+        <h2>Mis reservas activas</h2>
+        <ul id="my-reservations-list" class="admin-list">
+          <li class="list-empty">Inicia sesión para ver tus reservas.</li>
+        </ul>
+      </div>
+    </div><!-- /view-my-reservations -->
+ 
+    <!-- ════════ VISTA: PERFIL ════════ -->
+    <div id="view-profile" style="display:none">
+      <div class="card text-center">
+        <div class="profile-avatar" id="profile-avatar-initials">?</div>
+        <strong id="profile-display-name" style="font-size:1.1rem">Sin sesión</strong>
+        <p id="profile-email" class="view-muted" style="font-size:.85rem;margin:4px 0 10px">Inicia sesión para ver tu perfil.</p>
+        <span id="profile-status-pill" class="profile-status-pill">Participante</span>
+      </div>
+      <div class="card">
+        <p class="profile-detail"><strong>Rol:</strong> <span id="profile-role-detail">—</span></p>
+        <p class="profile-detail"><strong>Punto asignado:</strong> <span id="profile-assigned-point">—</span></p>
+        <p class="profile-detail"><strong>Capitán:</strong> <span id="profile-subadmin">—</span></p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+        <button type="button" id="btn-profile-logout"   class="btn-danger">Cerrar sesión</button>
+        <button type="button" id="btn-profile-go-enroll" class="btn-secondary">Formulario de inscripción</button>
+      </div>
+    </div><!-- /view-profile -->
+ 
+    <!-- ════════ VISTA: ADMIN ════════ -->
+    <div id="view-admin" style="display:none">
+ 
+      <!-- Puntos -->
+      <div class="card">
+        <h2>⚙️ Panel de administración</h2>
+        <h3>Puntos de predicación</h3>
+        <ul id="list-points" class="admin-list mb-12"></ul>
+        <button type="button" id="btn-add-point" class="btn-primary">+ Crear punto</button>
+      </div>
+ 
+      <!-- Cuentas pendientes de acceso -->
+      <div class="card">
+        <h3>🔐 Cuentas pendientes de activación</h3>
+        <ul id="list-pending-approval" class="admin-list"></ul>
+      </div>
+ 
+      <!-- Asignar capitán -->
+      <div class="card">
+        <h3>👮 Asignar capitán de punto</h3>
+        <div class="form-group" style="display:none">
+          <label for="subadmin-uid">UID del usuario (Firebase Auth)</label>
+          <input type="text" id="subadmin-uid" placeholder="Opcional (avanzado)">
+        </div>
+        <div class="form-group">
+          <label for="subadmin-email">Correo del capitán</label>
+          <input type="email" id="subadmin-email" placeholder="correo@ejemplo.com">
+        </div>
+        <div class="form-group">
+          <label for="subadmin-name">Nombre del capitán</label>
+          <input type="text" id="subadmin-name" placeholder="Nombre completo">
+        </div>
+        <div class="form-group">
+          <label for="subadmin-point">Punto asignado</label>
+          <select id="subadmin-point"><option value="">Selecciona un punto…</option></select>
+        </div>
+        <button type="button" id="btn-create-subadmin" class="btn-primary">Asignar o invitar capitán</button>
+      </div>
+ 
+      <!-- Exportar PDF -->
+      <div class="card">
+        <h3>📄 Exportar reportes</h3>
+        <p class="view-muted mb-12" style="font-size:.85rem">Exporta todos los reportes del punto seleccionado como PDF.</p>
+        <button type="button" id="btn-export-all-pdf" class="btn-secondary">Exportar todos los reportes (PDF)</button>
+      </div>
+ 
+    </div><!-- /view-admin -->
+ 
+  </main><!-- /app-main -->
+</div><!-- /app -->
+ 
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODALES
+══════════════════════════════════════════════════════════════════════════ -->
+ 
+<!-- Modal: autenticación -->
+<div id="modal-auth" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-auth-title" aria-hidden="true">
+  <div class="modal-box">
+    <button type="button" class="modal-close" data-close-modal="modal-auth" aria-label="Cerrar">✕</button>
+    <h2 id="modal-auth-title">Iniciar sesión</h2>
+    <div class="form-group">
+      <label for="auth-email">Correo electrónico</label>
+      <input type="email" id="auth-email" placeholder="correo@ejemplo.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label for="auth-password">Contraseña</label>
+      <input type="password" id="auth-password" placeholder="Contraseña" autocomplete="current-password">
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="btn-login" class="btn-primary w-full">Entrar</button>
+    </div>
+    <div style="text-align:center;margin-top:12px">
+      <span style="font-size:.82rem;color:#6b7280">— o —</span>
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="btn-google-signin" class="btn-secondary w-full" style="display:flex;align-items:center;justify-content:center;gap:8px">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google">
+        Continuar con Google
+      </button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal: agregar participante -->
+<div id="modal-participant" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-part-title" aria-hidden="true">
+  <div class="modal-box">
+    <button type="button" class="modal-close" data-close-modal="modal-participant" aria-label="Cerrar">✕</button>
+    <h2 id="modal-part-title">Agregar participante</h2>
+    <div class="form-group">
+      <label for="inp-part-name">Nombre completo</label>
+      <input type="text" id="inp-part-name" placeholder="Nombre del participante" maxlength="80">
+    </div>
+    <div class="form-group">
+      <label for="inp-part-phone">Teléfono (opcional)</label>
+      <input type="text" id="inp-part-phone" placeholder="Ej: 555-1234" maxlength="30">
+    </div>
+    <div class="modal-actions">
+      <button type="button" data-close-modal="modal-participant" class="btn-secondary">Cancelar</button>
+      <button type="button" id="btn-save-part" class="btn-primary">Guardar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal: reporte de turno -->
+<div id="modal-report" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-report-title" aria-hidden="true">
+  <div class="modal-box">
+    <button type="button" class="modal-close" data-close-modal="modal-report" aria-label="Cerrar">✕</button>
+    <h2 id="modal-report-title">📋 Reporte de turno</h2>
+    <p id="report-slot-label" style="font-size:.82rem;color:#4b5563;margin-bottom:14px"></p>
+ 
+    <div class="form-group">
+      <label for="report-date">Fecha del turno</label>
+      <input type="date" id="report-date">
+    </div>
+    <div class="form-group">
+      <label for="report-start-time">Hora de inicio real</label>
+      <input type="time" id="report-start-time">
+    </div>
+    <div class="form-group">
+      <label for="report-fulfilled">¿Se cumplió el turno?</label>
+      <select id="report-fulfilled">
+        <option value="true">Sí</option>
+        <option value="false">No</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="report-conversation">¿Conversaciones iniciadas?</label>
+      <select id="report-conversation">
+        <option value="false">No</option>
+        <option value="true">Sí</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="report-bible-study">¿Arreglos para estudio bíblico?</label>
+      <select id="report-bible-study">
+        <option value="false">No</option>
+        <option value="true">Sí</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="report-revisits">Revisitas</label>
+      <input type="number" id="report-revisits" min="0" value="0">
+    </div>
+    <div class="form-group">
+      <label for="report-studies">Estudios bíblicos activos</label>
+      <input type="number" id="report-studies" min="0" value="0">
+    </div>
+    <div class="form-group">
+      <label for="report-notes">Notas (máx. 500 caracteres)</label>
+      <textarea id="report-notes" maxlength="500" placeholder="Observaciones…"></textarea>
+    </div>
+ 
+    <div class="modal-actions">
+      <button type="button" id="btn-remove-report"   class="btn-danger">Eliminar</button>
+      <button type="button" id="btn-download-report" class="btn-secondary">Descargar PDF</button>
+      <button type="button" id="btn-save-report"     class="btn-primary">Guardar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal: reasignación de punto -->
+<div id="modal-reassign" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-reassign-title" aria-hidden="true">
+  <div class="modal-box">
+    <button type="button" class="modal-close" data-close-modal="modal-reassign" aria-label="Cerrar">✕</button>
+    <h2 id="modal-reassign-title">⚠️ Cambiar de punto</h2>
+    <p style="font-size:.9rem;margin-bottom:12px">
+      Tienes <strong id="reassign-affected-count">0</strong> reserva(s) activa(s) en
+      <strong id="reassign-from-point"></strong>.
+    </p>
+    <p style="font-size:.9rem;margin-bottom:16px">
+      Si confirmas, se cancelarán y quedarás asignado a
+      <strong id="reassign-to-point"></strong>.
+    </p>
+    <div class="modal-actions">
+      <button type="button" id="btn-reassign-cancel"  class="btn-secondary">Cancelar</button>
+      <button type="button" id="btn-reassign-confirm" class="btn-primary">Confirmar cambio</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- ─── Scripts ─────────────────────────────────────────────────────────────── -->
+<script type="module" src="app.js"></script>
+ 
+</body>
+</html>
